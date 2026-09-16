@@ -3,281 +3,871 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FlowTrack — Period & Ovulation Tracker</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>FlowTrack — Cycle & Symptom Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    :root {
+      --bg-gradient: linear-gradient(135deg, #fff0f3 0%, #fde2e4 30%, #fce7f3 65%, #fff7ed 100%);
+      --glass-bg: rgba(255, 255, 255, 0.58);
+      --glass-bg-hover: rgba(255, 255, 255, 0.72);
+      --glass-border: rgba(255, 255, 255, 0.85);
+      --glass-shadow: 0 12px 36px 0 rgba(230, 160, 185, 0.18);
+      --primary: #e06d88;
+      --primary-hover: #cc5673;
+      --primary-light: #ffccd5;
+      --text-main: #4a3b40;
+      --text-muted: #806870;
+      --pill-border: rgba(224, 109, 136, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      color: var(--text-main);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Falling Petals Canvas */
+    #petals-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+    }
+
+    /* Glassmorphism Card Style */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      box-shadow: var(--glass-shadow);
+      padding: 28px;
+      transition: transform 0.15s ease-out, box-shadow 0.25s ease;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    /* Top Navigation */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 600;
+      color: #3b2a30;
+      letter-spacing: -0.5px;
+    }
+
+    .auth-btn {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--primary);
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 14px rgba(224, 109, 136, 0.15);
+      transition: all 0.25s ease;
+    }
+
+    .auth-btn:hover {
+      background: var(--primary);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(224, 109, 136, 0.3);
+    }
+
+    /* 3D Rotating Flower Logo */
+    .flower-scene {
+      width: 44px;
+      height: 44px;
+      perspective: 600px;
+    }
+
+    .flower-3d {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: spinFlower 14s infinite linear;
+    }
+
+    .petal {
+      position: absolute;
+      width: 20px;
+      height: 32px;
+      left: 12px;
+      top: 6px;
+      background: linear-gradient(to bottom, #ffccd5, #e06d88);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      opacity: 0.85;
+    }
+
+    .flower-center {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      left: 15px;
+      top: 15px;
+      background: radial-gradient(circle, #fde047, #f59e0b);
+      border-radius: 50%;
+      transform: translateZ(6px);
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+    }
+
+    .p1 { transform: rotate(0deg) translateZ(2px); }
+    .p2 { transform: rotate(60deg) translateZ(2px); }
+    .p3 { transform: rotate(120deg) translateZ(2px); }
+    .p4 { transform: rotate(180deg) translateZ(2px); }
+    .p5 { transform: rotate(240deg) translateZ(2px); }
+    .p6 { transform: rotate(300deg) translateZ(2px); }
+
+    @keyframes spinFlower {
+      0% { transform: rotateX(25deg) rotateY(0deg) rotateZ(0deg); }
+      100% { transform: rotateX(25deg) rotateY(360deg) rotateZ(360deg); }
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 860px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Overview Highlights */
+    .status-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(224, 109, 136, 0.12);
+      color: var(--primary);
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .hero-title {
+      font-size: 2.2rem;
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 14px;
+      color: #3b2a30;
+    }
+
+    .prediction-date {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 18px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #3b2a30;
+    }
+
+    /* Pill Selection Buttons */
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #3b2a30;
+    }
+
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      border: 1.5px solid var(--pill-border);
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--text-main);
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .pill:hover {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .pill.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 14px rgba(224, 109, 136, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* Inputs and Actions */
+    .input-field {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(224, 109, 136, 0.25);
+      background: rgba(255, 255, 255, 0.7);
+      outline: none;
+      font-size: 0.92rem;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .input-field:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(224, 109, 136, 0.3);
+      transition: all 0.25s ease;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(224, 109, 136, 0.4);
+    }
+
+    /* Cycle History Table */
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+
+    .history-table th {
+      text-align: left;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(224, 109, 136, 0.15);
+    }
+
+    .history-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid rgba(224, 109, 136, 0.08);
+      font-size: 0.92rem;
+    }
+
+    .btn-delete {
+      background: none;
+      border: none;
+      color: #d64045;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* Modal Backdrop */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(74, 59, 64, 0.35);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    /* Onboarding Steps */
+    .step-tracker {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .step-bar {
+      flex: 1;
+      height: 4px;
+      background: rgba(224, 109, 136, 0.2);
+      border-radius: 999px;
+    }
+
+    .step-bar.active {
+      background: var(--primary);
+    }
+
+    .hidden { display: none !important; }
   </style>
 </head>
-<body class="bg-rose-50/40 min-h-screen text-slate-800 pb-16">
+<body>
 
-  <!-- Navbar -->
-  <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-rose-100">
-    <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 to-pink-400 flex items-center justify-center text-white shadow-md shadow-rose-200 font-bold">
-          🌸
+  <!-- Petals Background Canvas -->
+  <canvas id="petals-canvas"></canvas>
+
+  <div class="app-container">
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="flower-scene">
+          <div class="flower-3d">
+            <div class="petal p1"></div>
+            <div class="petal p2"></div>
+            <div class="petal p3"></div>
+            <div class="petal p4"></div>
+            <div class="petal p5"></div>
+            <div class="petal p6"></div>
+            <div class="flower-center"></div>
+          </div>
         </div>
-        <div>
-          <h1 class="font-bold text-lg text-slate-900 leading-tight">FlowTrack</h1>
-          <p class="text-xs text-rose-500 font-medium">Cycle Intelligence</p>
-        </div>
+        <h1>FlowTrack</h1>
       </div>
-      <span class="text-xs px-3 py-1 bg-rose-100 text-rose-700 font-semibold rounded-full" id="phaseBadge">
-        Loading phase...
-      </span>
+      <button class="auth-btn" id="openAuthModalBtn">Sign In / Join</button>
+    </header>
+
+    <!-- Top Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Overview & Predictions -->
+      <section class="glass-card tilt-card" id="analyticsCard">
+        <span class="status-badge">Next Predicted Cycle</span>
+        <h2 class="hero-title" id="nextPeriodDisplay">Loading prediction...</h2>
+        <p style="color: var(--text-muted); margin-bottom: 16px;">
+          Estimated Fertile Window: <strong id="fertileWindowDisplay" style="color: var(--text-main);">Calculating...</strong>
+        </p>
+        <p style="color: var(--text-muted);">
+          Estimated Ovulation Day: <strong id="ovulationDayDisplay" style="color: var(--primary);">Calculating...</strong>
+        </p>
+
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-label">Avg Cycle Length</div>
+            <div class="stat-value" id="avgCycleLength">-- d</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Avg Period Length</div>
+            <div class="stat-value" id="avgPeriodLength">-- d</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Total Cycles</div>
+            <div class="stat-value" id="totalRecordedCycles">0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Cycle Start Logging -->
+      <section class="glass-card tilt-card">
+        <h3 class="section-title">Log New Cycle</h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
+          Log the first day your bleeding started to update future predictions.
+        </p>
+        <form id="newCycleForm">
+          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Start Date</label>
+          <input type="date" class="input-field" id="cycleStartDate" required>
+
+          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Period Duration (days)</label>
+          <input type="number" class="input-field" id="cycleDuration" value="5" min="1" max="15" required>
+
+          <button type="submit" class="btn-submit">Record Cycle</button>
+        </form>
+      </section>
     </div>
-  </header>
 
-  <main class="max-w-4xl mx-auto px-6 pt-8 space-y-8">
-    
-    <!-- Hero Analytics Cards -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <div class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden">
-        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Next Expected Period</div>
-        <div id="nextPeriodText" class="text-2xl font-bold text-slate-900">--</div>
-        <p id="daysRemainingText" class="text-xs text-rose-500 mt-2 font-medium">Calculating forecast...</p>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden">
-        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Fertile & Ovulation Window</div>
-        <div id="ovulationText" class="text-2xl font-bold text-slate-900">--</div>
-        <p id="fertileRangeText" class="text-xs text-purple-600 mt-2 font-medium">Approx. window</p>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden">
-        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Cycle Statistics</div>
-        <div class="flex items-baseline gap-2">
-          <span id="avgCycleText" class="text-2xl font-bold text-slate-900">28</span>
-          <span class="text-xs text-slate-500 font-medium">days avg</span>
-        </div>
-        <p class="text-xs text-slate-500 mt-2">Typical period: <span id="avgPeriodText" class="font-semibold text-slate-800">5</span> days</p>
-      </div>
-    </section>
-
-    <!-- Logging Forms Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- Daily Log Form -->
+    <section class="glass-card tilt-card" style="margin-bottom: 28px;">
+      <h3 class="section-title">Daily Symptoms & Mood Check-in</h3>
       
-      <!-- 1. Log Period Start -->
-      <section class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm">
-        <h2 class="text-lg font-bold text-slate-900 mb-1">Log Period Start</h2>
-        <p class="text-xs text-slate-500 mb-5">Mark the first day of your bleeding to refine cycle predictions.</p>
+      <form id="dailyLogForm">
+        <div style="max-width: 260px; margin-bottom: 18px;">
+          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Check-in Date</label>
+          <input type="date" class="input-field" id="logDate" required>
+        </div>
 
-        <form id="cycleForm" class="space-y-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Start Date</label>
-            <input type="date" id="startDate" required class="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Duration (Days of flow)</label>
-            <input type="number" id="periodLength" min="2" max="10" value="5" class="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
-          </div>
-          <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 transition-colors text-white text-sm font-semibold py-2.5 rounded-xl shadow-sm shadow-rose-200">
-            Save Period Start
-          </button>
-        </form>
-      </section>
+        <!-- Flow Intensity Pills -->
+        <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px; text-transform: uppercase;">Flow Intensity</label>
+        <div class="pill-group" id="flowPillGroup">
+          <span class="pill" data-type="flow" data-val="None">⚪ None</span>
+          <span class="pill" data-type="flow" data-val="Spotting">🌸 Spotting</span>
+          <span class="pill" data-type="flow" data-val="Light">💧 Light</span>
+          <span class="pill" data-type="flow" data-val="Medium">🌧️ Medium</span>
+          <span class="pill" data-type="flow" data-val="Heavy">🌊 Heavy</span>
+        </div>
 
-      <!-- 2. Daily Health & Symptom Log -->
-      <section class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm">
-        <h2 class="text-lg font-bold text-slate-900 mb-1">Daily Symptom Log</h2>
-        <p class="text-xs text-slate-500 mb-5">Log flow, energy, and physical signals for any selected date.</p>
+        <!-- Mood Pills -->
+        <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px; text-transform: uppercase;">Mood</label>
+        <div class="pill-group" id="moodPillGroup">
+          <span class="pill" data-type="mood" data-val="Calm">🧘 Calm</span>
+          <span class="pill" data-type="mood" data-val="Happy">✨ Happy</span>
+          <span class="pill" data-type="mood" data-val="Sensitive">🥺 Sensitive</span>
+          <span class="pill" data-type="mood" data-val="Irritable">⚡ Irritable</span>
+          <span class="pill" data-type="mood" data-val="Exhausted">😴 Exhausted</span>
+        </div>
 
-        <form id="dailyLogForm" class="space-y-4">
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Date</label>
-              <input type="date" id="logDate" required class="w-full text-sm px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Flow</label>
-              <select id="flow" class="w-full text-sm px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
-                <option value="">None</option>
-                <option value="spotting">Spotting</option>
-                <option value="light">Light</option>
-                <option value="medium">Medium</option>
-                <option value="heavy">Heavy</option>
-              </select>
-            </div>
-          </div>
+        <!-- Symptom Pills (Multi-select) -->
+        <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px; text-transform: uppercase;">Symptoms</label>
+        <div class="pill-group" id="symptomPillGroup">
+          <span class="pill" data-type="symptom" data-val="Cramps">🩸 Cramps</span>
+          <span class="pill" data-type="symptom" data-val="Headache">🤕 Headache</span>
+          <span class="pill" data-type="symptom" data-val="Bloating">🎈 Bloating</span>
+          <span class="pill" data-type="symptom" data-val="Backache">🩹 Backache</span>
+          <span class="pill" data-type="symptom" data-val="Acne">🫧 Acne</span>
+          <span class="pill" data-type="symptom" data-val="Cravings">🍫 Cravings</span>
+        </div>
 
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Mood</label>
-            <select id="mood" class="w-full text-sm px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
-              <option value="Energetic">⚡ Energetic</option>
-              <option value="Calm" selected>🌸 Calm & Centered</option>
-              <option value="Sensitive">🥺 Emotional / Sensitive</option>
-              <option value="Fatigued">😴 Tired / Low Energy</option>
-              <option value="Irritable">⚡ Irritable</option>
-            </select>
-          </div>
+        <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Notes</label>
+        <textarea class="input-field" id="logNotes" rows="3" placeholder="How are you feeling today? (optional)"></textarea>
 
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Symptoms</label>
-            <div class="flex flex-wrap gap-2 pt-1 text-xs" id="symptomsList">
-              <button type="button" class="symptom-tag px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-rose-400" data-val="Cramps">Cramps</button>
-              <button type="button" class="symptom-tag px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-rose-400" data-val="Headache">Headache</button>
-              <button type="button" class="symptom-tag px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-rose-400" data-val="Bloating">Bloating</button>
-              <button type="button" class="symptom-tag px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-rose-400" data-val="Acne">Acne</button>
-              <button type="button" class="symptom-tag px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-rose-400" data-val="Backache">Backache</button>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Private Notes</label>
-            <input type="text" id="notes" placeholder="Notes on sleep, nutrition, or workouts..." class="w-full text-sm px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
-          </div>
-
-          <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 transition-colors text-white text-sm font-semibold py-2.5 rounded-xl shadow-sm">
-            Update Daily Log
-          </button>
-        </form>
-      </section>
-    </div>
-
-    <!-- Cycle History Table -->
-    <section class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-base font-bold text-slate-900">Recorded Cycle History</h3>
-        <span class="text-xs text-slate-400">Past cycles</span>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs text-slate-600">
-          <thead class="bg-slate-50 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-100">
-            <tr>
-              <th class="py-3 px-4">Period Start</th>
-              <th class="py-3 px-4">Duration</th>
-              <th class="py-3 px-4">Cycle Length</th>
-              <th class="py-3 px-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="historyTableBody" class="divide-y divide-slate-100">
-            <tr><td colspan="4" class="py-4 text-center text-slate-400">Loading cycles...</td></tr>
-          </tbody>
-        </table>
-      </div>
+        <button type="submit" class="btn-submit" style="max-width: 240px;">Save Daily Entry</button>
+      </form>
     </section>
 
-  </main>
+    <!-- Cycle History List -->
+    <section class="glass-card tilt-card">
+      <h3 class="section-title">Cycle History</h3>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Start Date</th>
+            <th>Duration</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="historyTableBody">
+          <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No records found.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <!-- Auth & Onboarding Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="glass-card modal-card">
+      <button class="modal-close" id="closeAuthModalBtn">&times;</button>
+
+      <!-- Auth Form Screen -->
+      <div id="authView">
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 8px;" id="authModalTitle">Welcome to FlowTrack</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Sign in to sync your data across all your devices.</p>
+
+        <form id="authForm">
+          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Email</label>
+          <input type="email" class="input-field" id="authEmail" placeholder="you@example.com" required>
+
+          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Password</label>
+          <input type="password" class="input-field" id="authPassword" placeholder="••••••••" required>
+
+          <button type="submit" class="btn-submit" id="authSubmitBtn" style="margin-top: 8px;">Continue</button>
+        </form>
+
+        <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 18px;">
+          <span id="authToggleText">New to FlowTrack?</span>
+          <a href="#" id="toggleAuthMode" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create an account</a>
+        </p>
+      </div>
+
+      <!-- Onboarding Flow Screen -->
+      <div id="onboardingView" class="hidden">
+        <div class="step-tracker">
+          <div class="step-bar active" id="sb1"></div>
+          <div class="step-bar" id="sb2"></div>
+          <div class="step-bar" id="sb3"></div>
+        </div>
+
+        <!-- Step 1: Recent Cycle -->
+        <div class="onboarding-step" id="onbStep1">
+          <span class="status-badge">Step 1 of 3</span>
+          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 8px;">When was your last period?</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Select the first day your bleeding started.</p>
+          <input type="date" class="input-field" id="onbStartDate">
+          <button type="button" class="btn-submit" onclick="nextOnboardingStep(2)">Next &rarr;</button>
+        </div>
+
+        <!-- Step 2: Cycle Duration -->
+        <div class="onboarding-step hidden" id="onbStep2">
+          <span class="status-badge">Step 2 of 3</span>
+          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 8px;">Typical cycle lengths</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">Average estimates are completely fine if you're not sure.</p>
+          
+          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Cycle Length (days between periods)</label>
+          <input type="number" class="input-field" id="onbCycleLength" value="28" min="20" max="45">
+
+          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Period Duration (bleeding days)</label>
+          <input type="number" class="input-field" id="onbPeriodLength" value="5" min="1" max="12">
+
+          <button type="button" class="btn-submit" onclick="nextOnboardingStep(3)">Next &rarr;</button>
+        </div>
+
+        <!-- Step 3: Goal Selection -->
+        <div class="onboarding-step hidden" id="onbStep3">
+          <span class="status-badge">Step 3 of 3</span>
+          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 8px;">What is your primary focus?</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">This helps customize prediction indicators for you.</p>
+
+          <div class="pill-group" id="goalPillGroup" style="margin-bottom: 24px;">
+            <span class="pill active" data-goal="track">Track cycle & symptoms</span>
+            <span class="pill" data-goal="conceive">Plan a pregnancy</span>
+            <span class="pill" data-goal="prevent">Avoid pregnancy</span>
+            <span class="pill" data-goal="insights">Analyze health patterns</span>
+          </div>
+
+          <button type="button" class="btn-submit" onclick="finishOnboarding()">Complete Setup</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // Set default today inputs
-    const todayISO = new Date().toISOString().split('T')[0];
-    document.getElementById('startDate').value = todayISO;
-    document.getElementById('logDate').value = todayISO;
+    // --- 1. Falling Petal Particles (Canvas) ---
+    const canvas = document.getElementById('petals-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
 
-    // Toggle symptom buttons
-    const activeSymptoms = new Set();
-    document.querySelectorAll('.symptom-tag').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const val = btn.dataset.val;
-        if (activeSymptoms.has(val)) {
-          activeSymptoms.delete(val);
-          btn.classList.remove('bg-rose-500', 'text-white', 'border-rose-500');
-        } else {
-          activeSymptoms.add(val);
-          btn.classList.add('bg-rose-500', 'text-white', 'border-rose-500');
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const petalCount = 28;
+    const petals = [];
+    const colors = ['#fecdd3', '#fda4af', '#ffe4e6', '#fbcfe8'];
+
+    for (let i = 0; i < petalCount; i++) {
+      petals.push({
+        x: Math.random() * width,
+        y: Math.random() * height - height,
+        size: Math.random() * 8 + 7,
+        speedX: Math.random() * 1.2 - 0.6,
+        speedY: Math.random() * 1.5 + 0.8,
+        rotation: Math.random() * 360,
+        spin: Math.random() * 2 - 1,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        opacity: Math.random() * 0.5 + 0.35
+      });
+    }
+
+    function drawPetal(p) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.opacity;
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(-p.size / 2, -p.size, -p.size, p.size / 2, 0, p.size);
+      ctx.bezierCurveTo(p.size, p.size / 2, p.size / 2, -p.size, 0, 0);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function animatePetals() {
+      ctx.clearRect(0, 0, width, height);
+      for (let p of petals) {
+        p.x += p.speedX + Math.sin(p.y * 0.008) * 0.4;
+        p.y += p.speedY;
+        p.rotation += p.spin;
+
+        if (p.y > height + 20) {
+          p.y = -20;
+          p.x = Math.random() * width;
         }
+        drawPetal(p);
+      }
+      requestAnimationFrame(animatePetals);
+    }
+    animatePetals();
+
+    // --- 2. Interactive 3D Card Tilt Effect ---
+    const tiltCards = document.querySelectorAll('.tilt-card');
+
+    tiltCards.forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+
+        const rotateX = -(y / (rect.height / 2)) * 5; // max 5deg tilt
+        const rotateY = (x / (rect.width / 2)) * 5;
+
+        card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)';
       });
     });
 
-    async function loadData() {
+    // --- 3. Pill Selection Logic ---
+    let selectedFlow = null;
+    let selectedMood = null;
+    let selectedSymptoms = [];
+
+    function setupPills(containerId, isMulti = false, onSelect) {
+      const group = document.getElementById(containerId);
+      group.querySelectorAll('.pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          const val = pill.dataset.val;
+          if (!isMulti) {
+            group.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            onSelect(val);
+          } else {
+            pill.classList.toggle('active');
+            onSelect(val, pill.classList.contains('active'));
+          }
+        });
+      });
+    }
+
+    setupPills('flowPillGroup', false, val => { selectedFlow = val; });
+    setupPills('moodPillGroup', false, val => { selectedMood = val; });
+    setupPills('symptomPillGroup', true, (val, isActive) => {
+      if (isActive) selectedSymptoms.push(val);
+      else selectedSymptoms = selectedSymptoms.filter(s => s !== val);
+    });
+
+    // --- 4. Existing API Synchronization ---
+    const todayStr = new Date().toISOString().split('T')[0];
+    document.getElementById('cycleStartDate').value = todayStr;
+    document.getElementById('logDate').value = todayStr;
+
+    async function loadDashboardData() {
       try {
-        const [resAnalytics, resCycles] = await Promise.all([
-          fetch('/api/analytics'),
-          fetch('/api/cycles')
-        ]);
-        const analytics = await resAnalytics.json();
-        const cycles = await resCycles.json();
-
-        // Populate Analytics UI
-        document.getElementById('phaseBadge').innerText = analytics.current_phase;
-        document.getElementById('nextPeriodText').innerText = analytics.next_period_start || "Log 1st Cycle";
-        document.getElementById('ovulationText').innerText = analytics.ovulation_date || "--";
-        document.getElementById('avgCycleText').innerText = analytics.avg_cycle_length;
-        document.getElementById('avgPeriodText').innerText = analytics.avg_period_length;
-
-        if (analytics.fertile_window_start && analytics.fertile_window_end) {
-          document.getElementById('fertileRangeText').innerText = `${analytics.fertile_window_start} to ${analytics.fertile_window_end}`;
+        const analyticsRes = await fetch('/api/analytics');
+        if (analyticsRes.ok) {
+          const data = await analyticsRes.json();
+          document.getElementById('nextPeriodDisplay').textContent = data.next_period || 'Log first cycle below';
+          document.getElementById('fertileWindowDisplay').textContent = data.fertile_window || 'N/A';
+          document.getElementById('ovulationDayDisplay').textContent = data.ovulation_day || 'N/A';
+          document.getElementById('avgCycleLength').textContent = (data.avg_cycle_length || 28) + ' d';
+          document.getElementById('avgPeriodLength').textContent = (data.avg_period_length || 5) + ' d';
+          document.getElementById('totalRecordedCycles').textContent = data.total_cycles || 0;
         }
 
-        if (analytics.next_period_start) {
-          const daysAway = Math.round((new Date(analytics.next_period_start) - new Date()) / (1000 * 60 * 60 * 24));
-          document.getElementById('daysRemainingText').innerText = daysAway >= 0 
-            ? `Estimated in ${daysAway} days` 
-            : `Late by ${Math.abs(daysAway)} days`;
+        const cyclesRes = await fetch('/api/cycles');
+        if (cyclesRes.ok) {
+          const cycles = await cyclesRes.json();
+          renderCycleHistory(cycles);
         }
-
-        // Render Table
-        const tbody = document.getElementById('historyTableBody');
-        if (cycles.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400">No period cycles recorded yet. Enter your first date above!</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = cycles.map(c => `
-          <tr class="hover:bg-rose-50/30 transition-colors">
-            <td class="py-3 px-4 font-semibold text-slate-800">${c.start_date}</td>
-            <td class="py-3 px-4">${c.period_length} days</td>
-            <td class="py-3 px-4 font-medium ${c.cycle_length ? 'text-rose-600' : 'text-slate-400'}">
-              ${c.cycle_length ? `${c.cycle_length} days` : 'Baseline'}
-            </td>
-            <td class="py-3 px-4 text-right">
-              <button onclick="deleteCycle(${c.id})" class="text-slate-400 hover:text-rose-600 transition-colors">✕</button>
-            </td>
-          </tr>
-        `).join('');
-
       } catch (err) {
-        console.error("Error fetching data:", err);
+        console.warn('Backend API not yet reached or offline; displaying defaults.', err);
       }
     }
 
-    // Submit Period Start
-    document.getElementById('cycleForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const start_date = document.getElementById('startDate').value;
-      const period_length = document.getElementById('periodLength').value;
+    function renderCycleHistory(cycles) {
+      const tbody = document.getElementById('historyTableBody');
+      if (!cycles || cycles.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No cycles recorded yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = cycles.map(c => `
+        <tr>
+          <td><strong>${c.start_date}</strong></td>
+          <td>${c.period_length || 5} days</td>
+          <td><button class="btn-delete" onclick="deleteCycle(${c.id})">Remove</button></td>
+        </tr>
+      `).join('');
+    }
 
-      await fetch('/api/cycles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ start_date, period_length })
-      });
-      loadData();
-    });
+    async function deleteCycle(id) {
+      if (confirm('Delete this cycle entry?')) {
+        await fetch(`/api/cycles/${id}`, { method: 'DELETE' });
+        loadDashboardData();
+      }
+    }
 
-    // Submit Daily Log
-    document.getElementById('dailyLogForm').addEventListener('submit', async (e) => {
+    document.getElementById('newCycleForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const payload = {
-        date: document.getElementById('logDate').value,
-        flow: document.getElementById('flow').value,
-        mood: document.getElementById('mood').value,
-        notes: document.getElementById('notes').value,
-        symptoms: Array.from(activeSymptoms)
+        start_date: document.getElementById('cycleStartDate').value,
+        period_length: parseInt(document.getElementById('cycleDuration').value, 10)
       };
-
-      const res = await fetch('/api/logs', {
+      await fetch('/api/cycles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      if (res.ok) {
-        alert('Daily log saved!');
-      }
+      loadDashboardData();
     });
 
-    async function deleteCycle(id) {
-      if (confirm('Delete this cycle record?')) {
-        await fetch(`/api/cycles/${id}`, { method: 'DELETE' });
-        loadData();
+    document.getElementById('dailyLogForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        date: document.getElementById('logDate').value,
+        flow_intensity: selectedFlow,
+        mood: selectedMood,
+        symptoms: selectedSymptoms.join(','),
+        notes: document.getElementById('logNotes').value
+      };
+      await fetch('/api/logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      alert('Daily log saved!');
+    });
+
+    loadDashboardData();
+
+    // --- 5. Auth & Onboarding Modal Handlers ---
+    const authModal = document.getElementById('authModal');
+    const openAuthBtn = document.getElementById('openAuthModalBtn');
+    const closeAuthBtn = document.getElementById('closeAuthModalBtn');
+    const toggleAuthMode = document.getElementById('toggleAuthMode');
+    let isRegisterMode = false;
+
+    openAuthBtn.onclick = () => authModal.classList.add('active');
+    closeAuthBtn.onclick = () => authModal.classList.remove('active');
+
+    toggleAuthMode.onclick = (e) => {
+      e.preventDefault();
+      isRegisterMode = !isRegisterMode;
+      document.getElementById('authModalTitle').textContent = isRegisterMode ? 'Create Your Account' : 'Welcome Back';
+      document.getElementById('authSubmitBtn').textContent = isRegisterMode ? 'Sign Up & Start Setup' : 'Sign In';
+      document.getElementById('authToggleText').textContent = isRegisterMode ? 'Already have an account?' : 'New to FlowTrack?';
+      toggleAuthMode.textContent = isRegisterMode ? 'Sign In' : 'Create an account';
+    };
+
+    document.getElementById('authForm').onsubmit = (e) => {
+      e.preventDefault();
+      if (isRegisterMode) {
+        document.getElementById('authView').classList.add('hidden');
+        document.getElementById('onboardingView').classList.remove('hidden');
+      } else {
+        authModal.classList.remove('active');
+        openAuthBtn.textContent = 'My Account';
+      }
+    };
+
+    function nextOnboardingStep(step) {
+      document.querySelectorAll('.onboarding-step').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.step-bar').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(`onbStep${step}`).classList.remove('hidden');
+      for (let i = 1; i <= step; i++) {
+        document.getElementById(`sb${i}`).classList.add('active');
       }
     }
 
-    loadData();
+    async function finishOnboarding() {
+      const initialStartDate = document.getElementById('onbStartDate').value;
+      const initialCycleLength = parseInt(document.getElementById('onbCycleLength').value, 10);
+      const initialPeriodLength = parseInt(document.getElementById('onbPeriodLength').value, 10);
+
+      if (initialStartDate) {
+        await fetch('/api/cycles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ start_date: initialStartDate, period_length: initialPeriodLength })
+        });
+      }
+
+      authModal.classList.remove('active');
+      openAuthBtn.textContent = 'My Account';
+      loadDashboardData();
+    }
   </script>
 </body>
 </html>
