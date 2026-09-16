@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlowTrack — Period & Ovulation Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-rose-50/40 min-h-screen text-slate-800 pb-16">
+
+  <!-- Navbar -->
+  <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-rose-100">
+    <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 to-pink-400 flex items-center justify-center text-white shadow-md shadow-rose-200 font-bold">
+          🌸
+        </div>
+        <div>
+          <h1 class="font-bold text-lg text-slate-900 leading-tight">FlowTrack</h1>
+          <p class="text-xs text-rose-500 font-medium">Cycle Intelligence</p>
+        </div>
+      </div>
+      <span class="text-xs px-3 py-1 bg-rose-100 text-rose-700 font-semibold rounded-full" id="phaseBadge">
+        Loading phase...
+      </span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-6 pt-8 space-y-8">
+    
+    <!-- Hero Analytics Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden">
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Next Expected Period</div>
+        <div id="nextPeriodText" class="text-2xl font-bold text-slate-900">--</div>
+        <p id="daysRemainingText" class="text-xs text-rose-500 mt-2 font-medium">Calculating forecast...</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden">
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Fertile & Ovulation Window</div>
+        <div id="ovulationText" class="text-2xl font-bold text-slate-900">--</div>
+        <p id="fertileRangeText" class="text-xs text-purple-600 mt-2 font-medium">Approx. window</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden">
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Cycle Statistics</div>
+        <div class="flex items-baseline gap-2">
+          <span id="avgCycleText" class="text-2xl font-bold text-slate-900">28</span>
+          <span class="text-xs text-slate-500 font-medium">days avg</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">Typical period: <span id="avgPeriodText" class="font-semibold text-slate-800">5</span> days</p>
+      </div>
+    </section>
+
+    <!-- Logging Forms Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      
+      <!-- 1. Log Period Start -->
+      <section class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-1">Log Period Start</h2>
+        <p class="text-xs text-slate-500 mb-5">Mark the first day of your bleeding to refine cycle predictions.</p>
+
+        <form id="cycleForm" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Start Date</label>
+            <input type="date" id="startDate" required class="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Duration (Days of flow)</label>
+            <input type="number" id="periodLength" min="2" max="10" value="5" class="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
+          </div>
+          <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 transition-colors text-white text-sm font-semibold py-2.5 rounded-xl shadow-sm shadow-rose-200">
+            Save Period Start
+          </button>
+        </form>
+      </section>
+
+      <!-- 2. Daily Health & Symptom Log -->
+      <section class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-1">Daily Symptom Log</h2>
+        <p class="text-xs text-slate-500 mb-5">Log flow, energy, and physical signals for any selected date.</p>
+
+        <form id="dailyLogForm" class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Date</label>
+              <input type="date" id="logDate" required class="w-full text-sm px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Flow</label>
+              <select id="flow" class="w-full text-sm px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
+                <option value="">None</option>
+                <option value="spotting">Spotting</option>
+                <option value="light">Light</option>
+                <option value="medium">Medium</option>
+                <option value="heavy">Heavy</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Mood</label>
+            <select id="mood" class="w-full text-sm px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
+              <option value="Energetic">⚡ Energetic</option>
+              <option value="Calm" selected>🌸 Calm & Centered</option>
+              <option value="Sensitive">🥺 Emotional / Sensitive</option>
+              <option value="Fatigued">😴 Tired / Low Energy</option>
+              <option value="Irritable">⚡ Irritable</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Symptoms</label>
+            <div class="flex flex-wrap gap-2 pt-1 text-xs" id="symptomsList">
+              <button type="button" class="symptom-tag px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-rose-400" data-val="Cramps">Cramps</button>
+              <button type="button" class="symptom-tag px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-rose-400" data-val="Headache">Headache</button>
+              <button type="button" class="symptom-tag px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-rose-400" data-val="Bloating">Bloating</button>
+              <button type="button" class="symptom-tag px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-rose-400" data-val="Acne">Acne</button>
+              <button type="button" class="symptom-tag px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-rose-400" data-val="Backache">Backache</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Private Notes</label>
+            <input type="text" id="notes" placeholder="Notes on sleep, nutrition, or workouts..." class="w-full text-sm px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-slate-50/50">
+          </div>
+
+          <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 transition-colors text-white text-sm font-semibold py-2.5 rounded-xl shadow-sm">
+            Update Daily Log
+          </button>
+        </form>
+      </section>
+    </div>
+
+    <!-- Cycle History Table -->
+    <section class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-bold text-slate-900">Recorded Cycle History</h3>
+        <span class="text-xs text-slate-400">Past cycles</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-slate-600">
+          <thead class="bg-slate-50 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-100">
+            <tr>
+              <th class="py-3 px-4">Period Start</th>
+              <th class="py-3 px-4">Duration</th>
+              <th class="py-3 px-4">Cycle Length</th>
+              <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody" class="divide-y divide-slate-100">
+            <tr><td colspan="4" class="py-4 text-center text-slate-400">Loading cycles...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Set default today inputs
+    const todayISO = new Date().toISOString().split('T')[0];
+    document.getElementById('startDate').value = todayISO;
+    document.getElementById('logDate').value = todayISO;
+
+    // Toggle symptom buttons
+    const activeSymptoms = new Set();
+    document.querySelectorAll('.symptom-tag').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.dataset.val;
+        if (activeSymptoms.has(val)) {
+          activeSymptoms.delete(val);
+          btn.classList.remove('bg-rose-500', 'text-white', 'border-rose-500');
+        } else {
+          activeSymptoms.add(val);
+          btn.classList.add('bg-rose-500', 'text-white', 'border-rose-500');
+        }
+      });
+    });
+
+    async function loadData() {
+      try {
+        const [resAnalytics, resCycles] = await Promise.all([
+          fetch('/api/analytics'),
+          fetch('/api/cycles')
+        ]);
+        const analytics = await resAnalytics.json();
+        const cycles = await resCycles.json();
+
+        // Populate Analytics UI
+        document.getElementById('phaseBadge').innerText = analytics.current_phase;
+        document.getElementById('nextPeriodText').innerText = analytics.next_period_start || "Log 1st Cycle";
+        document.getElementById('ovulationText').innerText = analytics.ovulation_date || "--";
+        document.getElementById('avgCycleText').innerText = analytics.avg_cycle_length;
+        document.getElementById('avgPeriodText').innerText = analytics.avg_period_length;
+
+        if (analytics.fertile_window_start && analytics.fertile_window_end) {
+          document.getElementById('fertileRangeText').innerText = `${analytics.fertile_window_start} to ${analytics.fertile_window_end}`;
+        }
+
+        if (analytics.next_period_start) {
+          const daysAway = Math.round((new Date(analytics.next_period_start) - new Date()) / (1000 * 60 * 60 * 24));
+          document.getElementById('daysRemainingText').innerText = daysAway >= 0 
+            ? `Estimated in ${daysAway} days` 
+            : `Late by ${Math.abs(daysAway)} days`;
+        }
+
+        // Render Table
+        const tbody = document.getElementById('historyTableBody');
+        if (cycles.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400">No period cycles recorded yet. Enter your first date above!</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = cycles.map(c => `
+          <tr class="hover:bg-rose-50/30 transition-colors">
+            <td class="py-3 px-4 font-semibold text-slate-800">${c.start_date}</td>
+            <td class="py-3 px-4">${c.period_length} days</td>
+            <td class="py-3 px-4 font-medium ${c.cycle_length ? 'text-rose-600' : 'text-slate-400'}">
+              ${c.cycle_length ? `${c.cycle_length} days` : 'Baseline'}
+            </td>
+            <td class="py-3 px-4 text-right">
+              <button onclick="deleteCycle(${c.id})" class="text-slate-400 hover:text-rose-600 transition-colors">✕</button>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    }
+
+    // Submit Period Start
+    document.getElementById('cycleForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const start_date = document.getElementById('startDate').value;
+      const period_length = document.getElementById('periodLength').value;
+
+      await fetch('/api/cycles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ start_date, period_length })
+      });
+      loadData();
+    });
+
+    // Submit Daily Log
+    document.getElementById('dailyLogForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        date: document.getElementById('logDate').value,
+        flow: document.getElementById('flow').value,
+        mood: document.getElementById('mood').value,
+        notes: document.getElementById('notes').value,
+        symptoms: Array.from(activeSymptoms)
+      };
+
+      const res = await fetch('/api/logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        alert('Daily log saved!');
+      }
+    });
+
+    async function deleteCycle(id) {
+      if (confirm('Delete this cycle record?')) {
+        await fetch(`/api/cycles/${id}`, { method: 'DELETE' });
+        loadData();
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
