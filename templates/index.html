@@ -6,21 +6,23 @@
   <title>FlowTrack — Cycle & Symptom Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, #fff0f3 0%, #fde2e4 30%, #fce7f3 65%, #fff7ed 100%);
-      --glass-bg: rgba(255, 255, 255, 0.58);
-      --glass-bg-hover: rgba(255, 255, 255, 0.72);
-      --glass-border: rgba(255, 255, 255, 0.85);
-      --glass-shadow: 0 12px 36px 0 rgba(230, 160, 185, 0.18);
-      --primary: #e06d88;
-      --primary-hover: #cc5673;
-      --primary-light: #ffccd5;
-      --text-main: #4a3b40;
-      --text-muted: #806870;
-      --pill-border: rgba(224, 109, 136, 0.25);
+      --bg-dark: #2a1520;
+      --bg-gradient: radial-gradient(circle at 20% 30%, #4a2034 0%, #29121e 60%, #170911 100%);
+      --glass-surface: rgba(255, 255, 255, 0.08);
+      --glass-surface-hover: rgba(255, 255, 255, 0.12);
+      --glass-border: rgba(255, 255, 255, 0.16);
+      --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+      --accent-pink: #ff5c8a;
+      --accent-pink-hover: #ff336e;
+      --accent-soft: #fecdd3;
+      --accent-glow: rgba(255, 92, 138, 0.45);
+      --text-bright: #ffffff;
+      --text-dim: #c9b4be;
+      --card-radius: 28px;
     }
 
     * {
@@ -32,13 +34,14 @@
 
     body {
       background: var(--bg-gradient);
+      background-color: var(--bg-dark);
       min-height: 100vh;
-      color: var(--text-main);
+      color: var(--text-bright);
       overflow-x: hidden;
       position: relative;
     }
 
-    /* Falling Petals Canvas */
+    /* Falling Petals Particle Canvas */
     #petals-canvas {
       position: fixed;
       top: 0;
@@ -49,603 +52,794 @@
       z-index: 0;
     }
 
-    .app-container {
+    /* Ambient Background Glow Spots */
+    .glow-spot {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-1 { top: 10%; left: 8%; width: 380px; height: 380px; background: rgba(255, 92, 138, 0.18); }
+    .glow-2 { bottom: 15%; right: 10%; width: 440px; height: 440px; background: rgba(186, 68, 116, 0.15); }
+
+    /* Screen Views Manager */
+    .screen-view {
       position: relative;
       z-index: 1;
-      max-width: 1150px;
-      margin: 0 auto;
-      padding: 24px 20px 80px;
+      min-height: 100vh;
+      display: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .screen-view.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    /* Glassmorphism Card Style */
+    /* Glassmorphism Card Template */
     .glass-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(18px) saturate(160%);
-      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      background: var(--glass-surface);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
       border: 1px solid var(--glass-border);
-      border-radius: 24px;
+      border-radius: var(--card-radius);
       box-shadow: var(--glass-shadow);
-      padding: 28px;
-      transition: transform 0.15s ease-out, box-shadow 0.25s ease;
-      transform-style: preserve-3d;
-      will-change: transform;
+      padding: 36px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
     }
 
-    /* Top Navigation */
-    .navbar {
+    /* ========================================================
+       LARGE 3D BLOOMING ROSE / PEONY FLOWER
+       ======================================================== */
+    .flower-3d-wrapper {
+      perspective: 1000px;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      margin-bottom: 32px;
+      margin: 0 auto;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 16px;
+    /* Hero Size Flower (Dashboard) */
+    .flower-hero-size {
+      width: 160px;
+      height: 160px;
     }
 
-    .brand h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.9rem;
-      font-weight: 600;
-      color: #3b2a30;
-      letter-spacing: -0.5px;
+    /* Auth Logo Size Flower */
+    .flower-logo-size {
+      width: 72px;
+      height: 72px;
+      margin-bottom: 16px;
     }
 
-    .auth-btn {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      color: var(--primary);
-      font-weight: 600;
-      padding: 10px 22px;
-      border-radius: 9999px;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 14px rgba(224, 109, 136, 0.15);
-      transition: all 0.25s ease;
-    }
-
-    .auth-btn:hover {
-      background: var(--primary);
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(224, 109, 136, 0.3);
-    }
-
-    /* 3D Rotating Flower Logo */
-    .flower-scene {
-      width: 44px;
-      height: 44px;
-      perspective: 600px;
-    }
-
-    .flower-3d {
+    .flower-container {
       width: 100%;
       height: 100%;
       position: relative;
       transform-style: preserve-3d;
-      animation: spinFlower 14s infinite linear;
+      animation: rotateFlower3D 16s infinite linear;
     }
 
-    .petal {
-      position: absolute;
-      width: 20px;
-      height: 32px;
-      left: 12px;
-      top: 6px;
-      background: linear-gradient(to bottom, #ffccd5, #e06d88);
-      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      opacity: 0.85;
+    @keyframes rotateFlower3D {
+      0% { transform: rotateX(20deg) rotateY(0deg) rotateZ(0deg); }
+      100% { transform: rotateX(20deg) rotateY(360deg) rotateZ(360deg); }
     }
 
-    .flower-center {
+    .peony-petal {
       position: absolute;
-      width: 14px;
-      height: 14px;
-      left: 15px;
-      top: 15px;
-      background: radial-gradient(circle, #fde047, #f59e0b);
+      width: 44%;
+      height: 60%;
+      left: 28%;
+      top: 20%;
+      border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+      transform-origin: center bottom;
+      box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.4), 0 4px 12px rgba(180, 40, 90, 0.25);
+      background: linear-gradient(135deg, #ffd1dc 0%, #ff85a2 50%, #e03a68 100%);
+      opacity: 0.9;
+    }
+
+    /* Concentric layered 3D petal arrangements */
+    .l1.p1 { transform: rotate(0deg) translateZ(10px) rotateX(25deg); }
+    .l1.p2 { transform: rotate(72deg) translateZ(10px) rotateX(25deg); }
+    .l1.p3 { transform: rotate(144deg) translateZ(10px) rotateX(25deg); }
+    .l1.p4 { transform: rotate(216deg) translateZ(10px) rotateX(25deg); }
+    .l1.p5 { transform: rotate(288deg) translateZ(10px) rotateX(25deg); }
+
+    .l2.p1 { transform: rotate(36deg) translateZ(20px) rotateX(40deg) scale(0.9); }
+    .l2.p2 { transform: rotate(108deg) translateZ(20px) rotateX(40deg) scale(0.9); }
+    .l2.p3 { transform: rotate(180deg) translateZ(20px) rotateX(40deg) scale(0.9); }
+    .l2.p4 { transform: rotate(252deg) translateZ(20px) rotateX(40deg) scale(0.9); }
+    .l2.p5 { transform: rotate(324deg) translateZ(20px) rotateX(40deg) scale(0.9); }
+
+    .flower-core {
+      position: absolute;
+      width: 24%;
+      height: 24%;
+      left: 38%;
+      top: 38%;
       border-radius: 50%;
-      transform: translateZ(6px);
-      box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+      background: radial-gradient(circle, #fff176 10%, #f59e0b 80%);
+      transform: translateZ(26px);
+      box-shadow: 0 0 16px rgba(255, 235, 59, 0.6);
     }
 
-    .p1 { transform: rotate(0deg) translateZ(2px); }
-    .p2 { transform: rotate(60deg) translateZ(2px); }
-    .p3 { transform: rotate(120deg) translateZ(2px); }
-    .p4 { transform: rotate(180deg) translateZ(2px); }
-    .p5 { transform: rotate(240deg) translateZ(2px); }
-    .p6 { transform: rotate(300deg) translateZ(2px); }
-
-    @keyframes spinFlower {
-      0% { transform: rotateX(25deg) rotateY(0deg) rotateZ(0deg); }
-      100% { transform: rotateX(25deg) rotateY(360deg) rotateZ(360deg); }
+    /* ========================================================
+       SCREEN 1: AUTHENTICATION VIEW (FIRST)
+       ======================================================== */
+    #authScreen {
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
     }
 
-    /* Grid Layout */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 24px;
-      margin-bottom: 28px;
+    .auth-box {
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
     }
 
-    @media (max-width: 860px) {
-      .dashboard-grid { grid-template-columns: 1fr; }
+    .auth-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
     }
 
-    /* Overview Highlights */
-    .status-badge {
-      display: inline-block;
-      padding: 6px 14px;
-      background: rgba(224, 109, 136, 0.12);
-      color: var(--primary);
-      font-size: 0.82rem;
-      font-weight: 700;
+    .auth-subtitle {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+
+    /* Segmented Tab Switch */
+    .tab-switch {
+      display: flex;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 4px;
       border-radius: 9999px;
+      border: 1px solid var(--glass-border);
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 0;
+      border-radius: 9999px;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--accent-pink);
+      color: #fff;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    .input-label {
+      display: block;
+      text-align: left;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+
+    .custom-input {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.92);
+      color: #3b2a30;
+      font-size: 0.95rem;
+      outline: none;
+      margin-bottom: 18px;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+
+    .custom-input:focus {
+      border-color: var(--accent-pink);
+      box-shadow: 0 0 0 3px rgba(255, 92, 138, 0.3);
+    }
+
+    .btn-pink-glow {
+      width: 100%;
+      padding: 14px;
+      border-radius: 9999px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-pink-hover));
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 8px 24px var(--accent-glow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-pink-glow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255, 92, 138, 0.6);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 22px 0 16px;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--glass-border);
+    }
+    .divider span { padding: 0 12px; }
+
+    .btn-google {
+      width: 100%;
+      padding: 12px;
+      border-radius: 9999px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-google:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    /* ========================================================
+       SCREEN 2: ONBOARDING QUESTIONS (SECOND)
+       ======================================================== */
+    #onboardingScreen {
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .onboarding-box {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .progress-bar-wrap {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .p-bar {
+      flex: 1;
+      height: 4px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .p-bar.active { background: var(--accent-pink); }
+
+    .q-step { display: none; }
+    .q-step.active { display: block; }
+
+    .badge-step {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(255, 92, 138, 0.2);
+      color: var(--accent-soft);
+      font-size: 0.78rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
       margin-bottom: 12px;
     }
 
-    .hero-title {
-      font-size: 2.2rem;
+    .q-title {
       font-family: 'Playfair Display', serif;
-      margin-bottom: 14px;
-      color: #3b2a30;
+      font-size: 1.7rem;
+      margin-bottom: 8px;
     }
 
-    .prediction-date {
-      color: var(--primary);
-      font-weight: 700;
+    .q-desc {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      margin-bottom: 22px;
     }
 
-    .stats-row {
+    /* ========================================================
+       SCREEN 3: MAIN DASHBOARD SITE (THIRD)
+       ======================================================== */
+    #siteScreen {
+      flex-direction: column;
+      padding: 24px 20px 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .nav-brand h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+    }
+
+    .btn-nav-outline {
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-surface);
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+    }
+    .btn-nav-outline:hover {
+      color: #fff;
+      border-color: var(--accent-pink);
+    }
+
+    /* Hero Showcase with Large Flower */
+    .hero-banner {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      margin-bottom: 30px;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero-banner { grid-template-columns: 1fr; }
+    }
+
+    .hero-content h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .hero-stats-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      gap: 14px;
       margin-top: 24px;
     }
 
-    .stat-box {
-      background: rgba(255, 255, 255, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.7);
+    .hero-stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
       border-radius: 18px;
       padding: 14px;
       text-align: center;
     }
 
-    .stat-label {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    .stat-value {
-      font-size: 1.3rem;
+    .hero-stat-card .val {
+      font-size: 1.4rem;
       font-weight: 700;
-      color: #3b2a30;
+      color: var(--accent-soft);
+      margin-top: 4px;
     }
 
-    /* Pill Selection Buttons */
-    .section-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      color: #3b2a30;
+    .hero-stat-card .lbl {
+      font-size: 0.76rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
     }
 
-    .pill-group {
+    .flower-showcase-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    /* Pill Selection Buttons for Log Forms */
+    .pill-container {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .pill-btn {
       padding: 8px 18px;
       border-radius: 9999px;
-      border: 1.5px solid var(--pill-border);
-      background: rgba(255, 255, 255, 0.6);
-      color: var(--text-main);
+      border: 1.5px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-dim);
       font-size: 0.88rem;
       font-weight: 500;
       cursor: pointer;
       user-select: none;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
     }
 
-    .pill:hover {
-      background: rgba(255, 255, 255, 0.95);
-      border-color: var(--primary);
+    .pill-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
       transform: translateY(-2px);
     }
 
-    .pill.active {
-      background: var(--primary);
+    .pill-btn.active {
+      background: var(--accent-pink);
       color: #ffffff;
-      border-color: var(--primary);
-      box-shadow: 0 4px 14px rgba(224, 109, 136, 0.35);
+      border-color: var(--accent-pink);
+      box-shadow: 0 4px 14px var(--accent-glow);
       transform: translateY(-1px);
     }
 
-    /* Inputs and Actions */
-    .input-field {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(224, 109, 136, 0.25);
-      background: rgba(255, 255, 255, 0.7);
-      outline: none;
-      font-size: 0.92rem;
-      color: var(--text-main);
-      margin-bottom: 16px;
-      transition: border-color 0.2s;
+    /* Dashboard Layout Grids */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 28px;
     }
 
-    .input-field:focus {
-      border-color: var(--primary);
-      background: #ffffff;
+    @media (max-width: 860px) {
+      .main-grid { grid-template-columns: 1fr; }
     }
 
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 9999px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 8px 24px rgba(224, 109, 136, 0.3);
-      transition: all 0.25s ease;
-    }
-
-    .btn-submit:hover {
-      background: var(--primary-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(224, 109, 136, 0.4);
-    }
-
-    /* Cycle History Table */
-    .history-table {
+    .table-history {
       width: 100%;
       border-collapse: collapse;
       margin-top: 14px;
     }
 
-    .history-table th {
+    .table-history th {
       text-align: left;
       font-size: 0.8rem;
       text-transform: uppercase;
-      color: var(--text-muted);
+      color: var(--text-dim);
       padding: 10px 12px;
-      border-bottom: 1px solid rgba(224, 109, 136, 0.15);
+      border-bottom: 1px solid var(--glass-border);
     }
 
-    .history-table td {
+    .table-history td {
       padding: 14px 12px;
-      border-bottom: 1px solid rgba(224, 109, 136, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       font-size: 0.92rem;
     }
 
-    .btn-delete {
+    .btn-remove {
       background: none;
       border: none;
-      color: #d64045;
-      font-size: 0.85rem;
-      cursor: pointer;
+      color: #ff6b8b;
       font-weight: 600;
-    }
-
-    /* Modal Backdrop */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(74, 59, 64, 0.35);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-      padding: 20px;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal-card {
-      max-width: 480px;
-      width: 100%;
-      position: relative;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: none;
-      border: none;
-      font-size: 1.4rem;
-      color: var(--text-muted);
       cursor: pointer;
     }
-
-    /* Onboarding Steps */
-    .step-tracker {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 24px;
-    }
-
-    .step-bar {
-      flex: 1;
-      height: 4px;
-      background: rgba(224, 109, 136, 0.2);
-      border-radius: 999px;
-    }
-
-    .step-bar.active {
-      background: var(--primary);
-    }
-
-    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <!-- Petals Background Canvas -->
+  <!-- Falling Petal Particles Canvas -->
   <canvas id="petals-canvas"></canvas>
 
-  <div class="app-container">
+  <!-- Ambient Glow Background -->
+  <div class="glow-spot glow-1"></div>
+  <div class="glow-spot glow-2"></div>
+
+  <!-- ========================================================
+       SCREEN 1: AUTHENTICATION (FIRST)
+       ======================================================== -->
+  <section class="screen-view active" id="authScreen">
+    <div class="glass-card auth-box">
+      <!-- 3D Rotating Flower -->
+      <div class="flower-3d-wrapper flower-logo-size">
+        <div class="flower-container">
+          <div class="peony-petal l1 p1"></div>
+          <div class="peony-petal l1 p2"></div>
+          <div class="peony-petal l1 p3"></div>
+          <div class="peony-petal l1 p4"></div>
+          <div class="peony-petal l1 p5"></div>
+          <div class="peony-petal l2 p1"></div>
+          <div class="peony-petal l2 p2"></div>
+          <div class="peony-petal l2 p3"></div>
+          <div class="peony-petal l2 p4"></div>
+          <div class="peony-petal l2 p5"></div>
+          <div class="flower-core"></div>
+        </div>
+      </div>
+
+      <h1 class="auth-title">Welcome to FlowTrack</h1>
+      <p class="auth-subtitle">Sign in to see your cycle insights</p>
+
+      <!-- Toggle Sign In vs Create Account -->
+      <div class="tab-switch">
+        <button class="tab-btn active" id="tabSignInBtn">Sign In</button>
+        <button class="tab-btn" id="tabCreateBtn">Create Account</button>
+      </div>
+
+      <form id="authFormMain">
+        <label class="input-label">Email</label>
+        <input type="email" class="custom-input" id="authEmailInput" placeholder="you@example.com" required>
+
+        <label class="input-label">Password</label>
+        <input type="password" class="custom-input" id="authPassInput" placeholder="••••••••" required>
+
+        <button type="submit" class="btn-pink-glow" id="authActionBtn">Sign In</button>
+      </form>
+
+      <div class="divider"><span>or</span></div>
+
+      <button type="button" class="btn-google" id="googleLoginBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
+          <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.8z"/>
+          <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.1-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.2c0 2.8.7 5.5 1.9 7.8l3.7-2.9z"/>
+          <path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.9C3.7 20.6 7.5 23.5 12 23.5z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 20px;">
+        <span id="footerTogglePrompt">New here?</span>
+        <a href="#" id="footerToggleLink" style="color: var(--accent-pink); font-weight: 600; text-decoration: none;">Create an account</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SCREEN 2: ONBOARDING QUESTIONS (SECOND)
+       ======================================================== -->
+  <section class="screen-view" id="onboardingScreen">
+    <div class="glass-card onboarding-box">
+      <div class="progress-bar-wrap">
+        <div class="p-bar active" id="pb1"></div>
+        <div class="p-bar" id="pb2"></div>
+        <div class="p-bar" id="pb3"></div>
+      </div>
+
+      <!-- Question 1: Start Date -->
+      <div class="q-step active" id="qStep1">
+        <span class="badge-step">Question 1 of 3</span>
+        <h2 class="q-title">When did your last period start?</h2>
+        <p class="q-desc">Pick the first day your bleeding began to initialize your tracking cycle.</p>
+        <input type="date" class="custom-input" id="qStartDate">
+        <button type="button" class="btn-pink-glow" onclick="goToStep(2)">Continue &rarr;</button>
+      </div>
+
+      <!-- Question 2: Cycle Durations -->
+      <div class="q-step" id="qStep2">
+        <span class="badge-step">Question 2 of 3</span>
+        <h2 class="q-title">Cycle & Period Durations</h2>
+        <p class="q-desc">Standard averages are filled in; adjust them to what feels closest for you.</p>
+
+        <label class="input-label">Cycle Length (days from start to start)</label>
+        <input type="number" class="custom-input" id="qCycleLength" value="28" min="18" max="50">
+
+        <label class="input-label">Period Bleeding Duration (days)</label>
+        <input type="number" class="custom-input" id="qPeriodLength" value="5" min="1" max="14">
+
+        <button type="button" class="btn-pink-glow" onclick="goToStep(3)">Continue &rarr;</button>
+      </div>
+
+      <!-- Question 3: Primary Goal -->
+      <div class="q-step" id="qStep3">
+        <span class="badge-step">Question 3 of 3</span>
+        <h2 class="q-title">What is your main goal?</h2>
+        <p class="q-desc">We will tailor your prediction highlights and fertile cues accordingly.</p>
+
+        <div class="pill-container" id="goalPillGroup">
+          <span class="pill-btn active" data-goal="track">🌸 Track Cycle & Symptoms</span>
+          <span class="pill-btn" data-goal="conceive">✨ Plan Pregnancy (Fertility)</span>
+          <span class="pill-btn" data-goal="prevent">🛡️ Avoid Pregnancy</span>
+          <span class="pill-btn" data-goal="health">🌿 General Body Awareness</span>
+        </div>
+
+        <button type="button" class="btn-pink-glow" onclick="finishOnboardingToSite()">Enter FlowTrack</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SCREEN 3: MAIN DASHBOARD SITE (THIRD)
+       ======================================================== -->
+  <section class="screen-view" id="siteScreen">
     <!-- Navbar -->
-    <header class="navbar">
-      <div class="brand">
-        <div class="flower-scene">
-          <div class="flower-3d">
-            <div class="petal p1"></div>
-            <div class="petal p2"></div>
-            <div class="petal p3"></div>
-            <div class="petal p4"></div>
-            <div class="petal p5"></div>
-            <div class="petal p6"></div>
-            <div class="flower-center"></div>
+    <header class="top-nav">
+      <div class="nav-brand">
+        <div class="flower-3d-wrapper" style="width: 38px; height: 38px;">
+          <div class="flower-container">
+            <div class="peony-petal l1 p1"></div>
+            <div class="peony-petal l1 p2"></div>
+            <div class="peony-petal l1 p3"></div>
+            <div class="peony-petal l1 p4"></div>
+            <div class="peony-petal l1 p5"></div>
+            <div class="flower-core"></div>
           </div>
         </div>
-        <h1>FlowTrack</h1>
+        <h2>FlowTrack</h2>
       </div>
-      <button class="auth-btn" id="openAuthModalBtn">Sign In / Join</button>
+      <div>
+        <button class="btn-nav-outline" onclick="returnToAuth()">Switch User / Logout</button>
+      </div>
     </header>
 
-    <!-- Top Dashboard Grid -->
-    <div class="dashboard-grid">
-      <!-- Overview & Predictions -->
-      <section class="glass-card tilt-card" id="analyticsCard">
-        <span class="status-badge">Next Predicted Cycle</span>
-        <h2 class="hero-title" id="nextPeriodDisplay">Loading prediction...</h2>
-        <p style="color: var(--text-muted); margin-bottom: 16px;">
-          Estimated Fertile Window: <strong id="fertileWindowDisplay" style="color: var(--text-main);">Calculating...</strong>
+    <!-- Large Blooming Flower Hero Banner -->
+    <div class="glass-card hero-banner">
+      <div class="hero-content">
+        <span class="badge-step">Cycle Forecast</span>
+        <h2 id="nextPeriodHeader">Next Period in -- Days</h2>
+        <p style="color: var(--text-dim); margin-bottom: 10px;">
+          Estimated Ovulation: <strong id="ovulationDayHeader" style="color: var(--accent-soft);">--</strong>
         </p>
-        <p style="color: var(--text-muted);">
-          Estimated Ovulation Day: <strong id="ovulationDayDisplay" style="color: var(--primary);">Calculating...</strong>
+        <p style="color: var(--text-dim);">
+          Fertile Window: <strong id="fertileWindowHeader" style="color: #fff;">--</strong>
         </p>
 
-        <div class="stats-row">
-          <div class="stat-box">
-            <div class="stat-label">Avg Cycle Length</div>
-            <div class="stat-value" id="avgCycleLength">-- d</div>
+        <div class="hero-stats-row">
+          <div class="hero-stat-card">
+            <div class="lbl">Avg Cycle</div>
+            <div class="val" id="statCycleLen">28 d</div>
           </div>
-          <div class="stat-box">
-            <div class="stat-label">Avg Period Length</div>
-            <div class="stat-value" id="avgPeriodLength">-- d</div>
+          <div class="hero-stat-card">
+            <div class="lbl">Avg Period</div>
+            <div class="val" id="statPeriodLen">5 d</div>
           </div>
-          <div class="stat-box">
-            <div class="stat-label">Total Cycles</div>
-            <div class="stat-value" id="totalRecordedCycles">0</div>
+          <div class="hero-stat-card">
+            <div class="lbl">Logged Cycles</div>
+            <div class="val" id="statCycleCount">0</div>
           </div>
         </div>
-      </section>
-
-      <!-- Quick Cycle Start Logging -->
-      <section class="glass-card tilt-card">
-        <h3 class="section-title">Log New Cycle</h3>
-        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
-          Log the first day your bleeding started to update future predictions.
-        </p>
-        <form id="newCycleForm">
-          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Start Date</label>
-          <input type="date" class="input-field" id="cycleStartDate" required>
-
-          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Period Duration (days)</label>
-          <input type="number" class="input-field" id="cycleDuration" value="5" min="1" max="15" required>
-
-          <button type="submit" class="btn-submit">Record Cycle</button>
-        </form>
-      </section>
-    </div>
-
-    <!-- Daily Log Form -->
-    <section class="glass-card tilt-card" style="margin-bottom: 28px;">
-      <h3 class="section-title">Daily Symptoms & Mood Check-in</h3>
-      
-      <form id="dailyLogForm">
-        <div style="max-width: 260px; margin-bottom: 18px;">
-          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Check-in Date</label>
-          <input type="date" class="input-field" id="logDate" required>
-        </div>
-
-        <!-- Flow Intensity Pills -->
-        <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px; text-transform: uppercase;">Flow Intensity</label>
-        <div class="pill-group" id="flowPillGroup">
-          <span class="pill" data-type="flow" data-val="None">⚪ None</span>
-          <span class="pill" data-type="flow" data-val="Spotting">🌸 Spotting</span>
-          <span class="pill" data-type="flow" data-val="Light">💧 Light</span>
-          <span class="pill" data-type="flow" data-val="Medium">🌧️ Medium</span>
-          <span class="pill" data-type="flow" data-val="Heavy">🌊 Heavy</span>
-        </div>
-
-        <!-- Mood Pills -->
-        <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px; text-transform: uppercase;">Mood</label>
-        <div class="pill-group" id="moodPillGroup">
-          <span class="pill" data-type="mood" data-val="Calm">🧘 Calm</span>
-          <span class="pill" data-type="mood" data-val="Happy">✨ Happy</span>
-          <span class="pill" data-type="mood" data-val="Sensitive">🥺 Sensitive</span>
-          <span class="pill" data-type="mood" data-val="Irritable">⚡ Irritable</span>
-          <span class="pill" data-type="mood" data-val="Exhausted">😴 Exhausted</span>
-        </div>
-
-        <!-- Symptom Pills (Multi-select) -->
-        <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px; text-transform: uppercase;">Symptoms</label>
-        <div class="pill-group" id="symptomPillGroup">
-          <span class="pill" data-type="symptom" data-val="Cramps">🩸 Cramps</span>
-          <span class="pill" data-type="symptom" data-val="Headache">🤕 Headache</span>
-          <span class="pill" data-type="symptom" data-val="Bloating">🎈 Bloating</span>
-          <span class="pill" data-type="symptom" data-val="Backache">🩹 Backache</span>
-          <span class="pill" data-type="symptom" data-val="Acne">🫧 Acne</span>
-          <span class="pill" data-type="symptom" data-val="Cravings">🍫 Cravings</span>
-        </div>
-
-        <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Notes</label>
-        <textarea class="input-field" id="logNotes" rows="3" placeholder="How are you feeling today? (optional)"></textarea>
-
-        <button type="submit" class="btn-submit" style="max-width: 240px;">Save Daily Entry</button>
-      </form>
-    </section>
-
-    <!-- Cycle History List -->
-    <section class="glass-card tilt-card">
-      <h3 class="section-title">Cycle History</h3>
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th>Start Date</th>
-            <th>Duration</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="historyTableBody">
-          <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No records found.</td></tr>
-        </tbody>
-      </table>
-    </section>
-  </div>
-
-  <!-- Auth & Onboarding Modal -->
-  <div class="modal-overlay" id="authModal">
-    <div class="glass-card modal-card">
-      <button class="modal-close" id="closeAuthModalBtn">&times;</button>
-
-      <!-- Auth Form Screen -->
-      <div id="authView">
-        <h2 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 8px;" id="authModalTitle">Welcome to FlowTrack</h2>
-        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Sign in to sync your data across all your devices.</p>
-
-        <form id="authForm">
-          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Email</label>
-          <input type="email" class="input-field" id="authEmail" placeholder="you@example.com" required>
-
-          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Password</label>
-          <input type="password" class="input-field" id="authPassword" placeholder="••••••••" required>
-
-          <button type="submit" class="btn-submit" id="authSubmitBtn" style="margin-top: 8px;">Continue</button>
-        </form>
-
-        <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 18px;">
-          <span id="authToggleText">New to FlowTrack?</span>
-          <a href="#" id="toggleAuthMode" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create an account</a>
-        </p>
       </div>
 
-      <!-- Onboarding Flow Screen -->
-      <div id="onboardingView" class="hidden">
-        <div class="step-tracker">
-          <div class="step-bar active" id="sb1"></div>
-          <div class="step-bar" id="sb2"></div>
-          <div class="step-bar" id="sb3"></div>
+      <!-- Prominent Blooming 3D Flower Showcase -->
+      <div class="flower-showcase-card">
+        <div class="flower-3d-wrapper flower-hero-size">
+          <div class="flower-container">
+            <div class="peony-petal l1 p1"></div>
+            <div class="peony-petal l1 p2"></div>
+            <div class="peony-petal l1 p3"></div>
+            <div class="peony-petal l1 p4"></div>
+            <div class="peony-petal l1 p5"></div>
+            <div class="peony-petal l2 p1"></div>
+            <div class="peony-petal l2 p2"></div>
+            <div class="peony-petal l2 p3"></div>
+            <div class="peony-petal l2 p4"></div>
+            <div class="peony-petal l2 p5"></div>
+            <div class="flower-core"></div>
+          </div>
         </div>
+        <p style="font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--accent-soft); margin-top: 18px; font-style: italic;">
+          "Expressing rhythm, emotions, and care"
+        </p>
+      </div>
+    </div>
 
-        <!-- Step 1: Recent Cycle -->
-        <div class="onboarding-step" id="onbStep1">
-          <span class="status-badge">Step 1 of 3</span>
-          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 8px;">When was your last period?</h3>
-          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Select the first day your bleeding started.</p>
-          <input type="date" class="input-field" id="onbStartDate">
-          <button type="button" class="btn-submit" onclick="nextOnboardingStep(2)">Next &rarr;</button>
-        </div>
+    <!-- Main Content Form Grids -->
+    <div class="main-grid">
+      <!-- Daily Symptoms & Mood Check-In -->
+      <div class="glass-card">
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 16px;">Daily Check-In</h3>
+        <form id="dailyFormSite">
+          <label class="input-label">Date</label>
+          <input type="date" class="custom-input" id="dailyLogDate" required>
 
-        <!-- Step 2: Cycle Duration -->
-        <div class="onboarding-step hidden" id="onbStep2">
-          <span class="status-badge">Step 2 of 3</span>
-          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 8px;">Typical cycle lengths</h3>
-          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">Average estimates are completely fine if you're not sure.</p>
-          
-          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Cycle Length (days between periods)</label>
-          <input type="number" class="input-field" id="onbCycleLength" value="28" min="20" max="45">
-
-          <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Period Duration (bleeding days)</label>
-          <input type="number" class="input-field" id="onbPeriodLength" value="5" min="1" max="12">
-
-          <button type="button" class="btn-submit" onclick="nextOnboardingStep(3)">Next &rarr;</button>
-        </div>
-
-        <!-- Step 3: Goal Selection -->
-        <div class="onboarding-step hidden" id="onbStep3">
-          <span class="status-badge">Step 3 of 3</span>
-          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 8px;">What is your primary focus?</h3>
-          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">This helps customize prediction indicators for you.</p>
-
-          <div class="pill-group" id="goalPillGroup" style="margin-bottom: 24px;">
-            <span class="pill active" data-goal="track">Track cycle & symptoms</span>
-            <span class="pill" data-goal="conceive">Plan a pregnancy</span>
-            <span class="pill" data-goal="prevent">Avoid pregnancy</span>
-            <span class="pill" data-goal="insights">Analyze health patterns</span>
+          <label class="input-label">Flow Intensity</label>
+          <div class="pill-container" id="flowPillList">
+            <span class="pill-btn" data-v="None">⚪ None</span>
+            <span class="pill-btn" data-v="Spotting">🌸 Spotting</span>
+            <span class="pill-btn" data-v="Light">💧 Light</span>
+            <span class="pill-btn" data-v="Medium">🌧️ Medium</span>
+            <span class="pill-btn" data-v="Heavy">🌊 Heavy</span>
           </div>
 
-          <button type="button" class="btn-submit" onclick="finishOnboarding()">Complete Setup</button>
+          <label class="input-label">Mood</label>
+          <div class="pill-container" id="moodPillList">
+            <span class="pill-btn" data-v="Calm">🧘 Calm</span>
+            <span class="pill-btn" data-v="Happy">✨ Happy</span>
+            <span class="pill-btn" data-v="Emotional">🥺 Sensitive</span>
+            <span class="pill-btn" data-v="Tense">⚡ Irritable</span>
+            <span class="pill-btn" data-v="Tired">😴 Exhausted</span>
+          </div>
+
+          <label class="input-label">Symptoms</label>
+          <div class="pill-container" id="symptomPillList">
+            <span class="pill-btn" data-v="Cramps">🩸 Cramps</span>
+            <span class="pill-btn" data-v="Headache">🤕 Headache</span>
+            <span class="pill-btn" data-v="Bloating">🎈 Bloating</span>
+            <span class="pill-btn" data-v="Acne">🫧 Acne</span>
+            <span class="pill-btn" data-v="Cravings">🍫 Cravings</span>
+          </div>
+
+          <label class="input-label">Notes</label>
+          <textarea class="custom-input" id="dailyNotes" rows="2" placeholder="Journal thoughts..."></textarea>
+
+          <button type="submit" class="btn-pink-glow">Save Entry</button>
+        </form>
+      </div>
+
+      <!-- Right Column: Record New Cycle & History -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div class="glass-card">
+          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 12px;">Log New Cycle Start</h3>
+          <form id="newCycleFormSite">
+            <label class="input-label">Start Date (Bleeding day 1)</label>
+            <input type="date" class="custom-input" id="newCycleStart" required>
+
+            <label class="input-label">Period Duration (days)</label>
+            <input type="number" class="custom-input" id="newCyclePeriod" value="5" min="1" max="14" required>
+
+            <button type="submit" class="btn-pink-glow">Log Cycle</button>
+          </form>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 12px;">Cycle History</h3>
+          <table class="table-history">
+            <thead>
+              <tr>
+                <th>Start Date</th>
+                <th>Duration</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="cycleTableRows">
+              <tr><td colspan="3" style="text-align: center; color: var(--text-dim);">No cycles recorded.</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
+  <!-- ========================================================
+       SCRIPTS: ANIMATIONS, WORKFLOW & API CONNECTION
+       ======================================================== -->
   <script>
-    // --- 1. Falling Petal Particles (Canvas) ---
+    // --- 1. Falling Petal Particles Simulation ---
     const canvas = document.getElementById('petals-canvas');
     const ctx = canvas.getContext('2d');
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
+    let cw = canvas.width = window.innerWidth;
+    let ch = canvas.height = window.innerHeight;
 
     window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      cw = canvas.width = window.innerWidth;
+      ch = canvas.height = window.innerHeight;
     });
 
-    const petalCount = 28;
-    const petals = [];
-    const colors = ['#fecdd3', '#fda4af', '#ffe4e6', '#fbcfe8'];
-
-    for (let i = 0; i < petalCount; i++) {
-      petals.push({
-        x: Math.random() * width,
-        y: Math.random() * height - height,
-        size: Math.random() * 8 + 7,
-        speedX: Math.random() * 1.2 - 0.6,
-        speedY: Math.random() * 1.5 + 0.8,
-        rotation: Math.random() * 360,
-        spin: Math.random() * 2 - 1,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        opacity: Math.random() * 0.5 + 0.35
-      });
-    }
+    const petals = Array.from({ length: 30 }, () => ({
+      x: Math.random() * cw,
+      y: Math.random() * ch - ch,
+      size: Math.random() * 10 + 8,
+      speedX: Math.random() * 1.4 - 0.7,
+      speedY: Math.random() * 1.5 + 0.9,
+      rotation: Math.random() * 360,
+      spin: Math.random() * 1.8 - 0.9,
+      opacity: Math.random() * 0.5 + 0.3,
+      color: ['#fecdd3', '#fda4af', '#f472b6', '#fff1f2'][Math.floor(Math.random() * 4)]
+    }));
 
     function drawPetal(p) {
       ctx.save();
@@ -653,7 +847,6 @@
       ctx.rotate((p.rotation * Math.PI) / 180);
       ctx.fillStyle = p.color;
       ctx.globalAlpha = p.opacity;
-
       ctx.beginPath();
       ctx.moveTo(0, 0);
       ctx.bezierCurveTo(-p.size / 2, -p.size, -p.size, p.size / 2, 0, p.size);
@@ -663,15 +856,14 @@
     }
 
     function animatePetals() {
-      ctx.clearRect(0, 0, width, height);
-      for (let p of petals) {
-        p.x += p.speedX + Math.sin(p.y * 0.008) * 0.4;
+      ctx.clearRect(0, 0, cw, ch);
+      for (const p of petals) {
+        p.x += p.speedX + Math.sin(p.y * 0.006) * 0.5;
         p.y += p.speedY;
         p.rotation += p.spin;
-
-        if (p.y > height + 20) {
+        if (p.y > ch + 20) {
           p.y = -20;
-          p.x = Math.random() * width;
+          p.x = Math.random() * cw;
         }
         drawPetal(p);
       }
@@ -679,127 +871,200 @@
     }
     animatePetals();
 
-    // --- 2. Interactive 3D Card Tilt Effect ---
-    const tiltCards = document.querySelectorAll('.tilt-card');
+    // --- 2. Screen Transition Management ---
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      target.classList.add('active');
+      window.scrollTo(0, 0);
+    }
 
-    tiltCards.forEach(card => {
-      card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
+    // Default dates
+    const todayISO = new Date().toISOString().split('T')[0];
+    document.getElementById('qStartDate').value = todayISO;
+    document.getElementById('dailyLogDate').value = todayISO;
+    document.getElementById('newCycleStart').value = todayISO;
 
-        const rotateX = -(y / (rect.height / 2)) * 5; // max 5deg tilt
-        const rotateY = (x / (rect.width / 2)) * 5;
+    // Tab switcher between Sign In & Create Account
+    let isCreateMode = false;
+    const tabSignIn = document.getElementById('tabSignInBtn');
+    const tabCreate = document.getElementById('tabCreateBtn');
+    const authActionBtn = document.getElementById('authActionBtn');
+    const footerLink = document.getElementById('footerToggleLink');
+    const footerPrompt = document.getElementById('footerTogglePrompt');
 
-        card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
-      });
+    function setAuthMode(create) {
+      isCreateMode = create;
+      if (isCreateMode) {
+        tabCreate.classList.add('active');
+        tabSignIn.classList.remove('active');
+        authActionBtn.textContent = 'Create Account & Continue';
+        footerPrompt.textContent = 'Already have an account?';
+        footerLink.textContent = 'Sign in';
+      } else {
+        tabSignIn.classList.add('active');
+        tabCreate.classList.remove('active');
+        authActionBtn.textContent = 'Sign In';
+        footerPrompt.textContent = 'New here?';
+        footerLink.textContent = 'Create an account';
+      }
+    }
 
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)';
-      });
+    tabSignIn.onclick = () => setAuthMode(false);
+    tabCreate.onclick = () => setAuthMode(true);
+    footerLink.onclick = (e) => {
+      e.preventDefault();
+      setAuthMode(!isCreateMode);
+    };
+
+    // Submitting Auth form -> moves to Question onboarding
+    document.getElementById('authFormMain').onsubmit = (e) => {
+      e.preventDefault();
+      showScreen('onboardingScreen');
+    };
+
+    document.getElementById('googleLoginBtn').onclick = () => {
+      showScreen('onboardingScreen');
+    };
+
+    // Onboarding step navigation
+    function goToStep(stepNumber) {
+      document.querySelectorAll('.q-step').forEach(q => q.classList.remove('active'));
+      document.querySelectorAll('.p-bar').forEach(b => b.classList.remove('active'));
+
+      document.getElementById(`qStep${stepNumber}`).classList.add('active');
+      for (let i = 1; i <= stepNumber; i++) {
+        document.getElementById(`pb${i}`).classList.add('active');
+      }
+    }
+
+    // Goal pill selection
+    document.querySelectorAll('#goalPillGroup .pill-btn').forEach(pill => {
+      pill.onclick = () => {
+        document.querySelectorAll('#goalPillGroup .pill-btn').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+      };
     });
 
-    // --- 3. Pill Selection Logic ---
-    let selectedFlow = null;
-    let selectedMood = null;
-    let selectedSymptoms = [];
+    // Complete onboarding -> move to Site
+    async function finishOnboardingToSite() {
+      const initStart = document.getElementById('qStartDate').value;
+      const initPeriod = parseInt(document.getElementById('qPeriodLength').value, 10);
 
-    function setupPills(containerId, isMulti = false, onSelect) {
-      const group = document.getElementById(containerId);
-      group.querySelectorAll('.pill').forEach(pill => {
-        pill.addEventListener('click', () => {
-          const val = pill.dataset.val;
-          if (!isMulti) {
-            group.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-            pill.classList.add('active');
-            onSelect(val);
-          } else {
-            pill.classList.toggle('active');
-            onSelect(val, pill.classList.contains('active'));
-          }
-        });
+      if (initStart) {
+        try {
+          await fetch('/api/cycles', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ start_date: initStart, period_length: initPeriod })
+          });
+        } catch (e) {
+          console.warn('API offline; proceeding with local values');
+        }
+      }
+
+      showScreen('siteScreen');
+      loadSiteData();
+    }
+
+    function returnToAuth() {
+      showScreen('authScreen');
+    }
+
+    // --- 3. Pill Logic on Site Check-In ---
+    let selFlow = 'None';
+    let selMood = 'Calm';
+    let selSymptoms = [];
+
+    function setupSingleSelect(id, callback) {
+      const container = document.getElementById(id);
+      container.querySelectorAll('.pill-btn').forEach(btn => {
+        btn.onclick = () => {
+          container.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          callback(btn.dataset.v);
+        };
       });
     }
 
-    setupPills('flowPillGroup', false, val => { selectedFlow = val; });
-    setupPills('moodPillGroup', false, val => { selectedMood = val; });
-    setupPills('symptomPillGroup', true, (val, isActive) => {
-      if (isActive) selectedSymptoms.push(val);
-      else selectedSymptoms = selectedSymptoms.filter(s => s !== val);
+    setupSingleSelect('flowPillList', v => selFlow = v);
+    setupSingleSelect('moodPillList', v => selMood = v);
+
+    document.querySelectorAll('#symptomPillList .pill-btn').forEach(btn => {
+      btn.onclick = () => {
+        btn.classList.toggle('active');
+        const v = btn.dataset.v;
+        if (btn.classList.contains('active')) selSymptoms.push(v);
+        else selSymptoms = selSymptoms.filter(item => item !== v);
+      };
     });
 
-    // --- 4. Existing API Synchronization ---
-    const todayStr = new Date().toISOString().split('T')[0];
-    document.getElementById('cycleStartDate').value = todayStr;
-    document.getElementById('logDate').value = todayStr;
-
-    async function loadDashboardData() {
+    // --- 4. Synchronize with FlowTrack Flask Backend ---
+    async function loadSiteData() {
       try {
         const analyticsRes = await fetch('/api/analytics');
         if (analyticsRes.ok) {
           const data = await analyticsRes.json();
-          document.getElementById('nextPeriodDisplay').textContent = data.next_period || 'Log first cycle below';
-          document.getElementById('fertileWindowDisplay').textContent = data.fertile_window || 'N/A';
-          document.getElementById('ovulationDayDisplay').textContent = data.ovulation_day || 'N/A';
-          document.getElementById('avgCycleLength').textContent = (data.avg_cycle_length || 28) + ' d';
-          document.getElementById('avgPeriodLength').textContent = (data.avg_period_length || 5) + ' d';
-          document.getElementById('totalRecordedCycles').textContent = data.total_cycles || 0;
+          document.getElementById('nextPeriodHeader').textContent = data.next_period ? `Next Period: ${data.next_period}` : 'Cycle Initialized';
+          document.getElementById('ovulationDayHeader').textContent = data.ovulation_day || 'Estimated Day 14';
+          document.getElementById('fertileWindowHeader').textContent = data.fertile_window || 'Calculating...';
+          document.getElementById('statCycleLen').textContent = (data.avg_cycle_length || 28) + ' d';
+          document.getElementById('statPeriodLen').textContent = (data.avg_period_length || 5) + ' d';
+          document.getElementById('statCycleCount').textContent = data.total_cycles || 1;
         }
 
-        const cyclesRes = await fetch('/api/cycles');
-        if (cyclesRes.ok) {
-          const cycles = await cyclesRes.json();
-          renderCycleHistory(cycles);
+        const cycleRes = await fetch('/api/cycles');
+        if (cycleRes.ok) {
+          const cycles = await cycleRes.json();
+          renderCycles(cycles);
         }
       } catch (err) {
-        console.warn('Backend API not yet reached or offline; displaying defaults.', err);
+        console.warn('Backend server not connected; using local defaults.', err);
       }
     }
 
-    function renderCycleHistory(cycles) {
-      const tbody = document.getElementById('historyTableBody');
+    function renderCycles(cycles) {
+      const tbody = document.getElementById('cycleTableRows');
       if (!cycles || cycles.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No cycles recorded yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-dim);">No cycles recorded yet.</td></tr>';
         return;
       }
       tbody.innerHTML = cycles.map(c => `
         <tr>
           <td><strong>${c.start_date}</strong></td>
           <td>${c.period_length || 5} days</td>
-          <td><button class="btn-delete" onclick="deleteCycle(${c.id})">Remove</button></td>
+          <td><button class="btn-remove" onclick="removeCycle(${c.id})">Remove</button></td>
         </tr>
       `).join('');
     }
 
-    async function deleteCycle(id) {
-      if (confirm('Delete this cycle entry?')) {
-        await fetch(`/api/cycles/${id}`, { method: 'DELETE' });
-        loadDashboardData();
-      }
+    async function removeCycle(id) {
+      await fetch(`/api/cycles/${id}`, { method: 'DELETE' });
+      loadSiteData();
     }
 
-    document.getElementById('newCycleForm').addEventListener('submit', async (e) => {
+    document.getElementById('newCycleFormSite').onsubmit = async (e) => {
       e.preventDefault();
       const payload = {
-        start_date: document.getElementById('cycleStartDate').value,
-        period_length: parseInt(document.getElementById('cycleDuration').value, 10)
+        start_date: document.getElementById('newCycleStart').value,
+        period_length: parseInt(document.getElementById('newCyclePeriod').value, 10)
       };
       await fetch('/api/cycles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      loadDashboardData();
-    });
+      loadSiteData();
+    };
 
-    document.getElementById('dailyLogForm').addEventListener('submit', async (e) => {
+    document.getElementById('dailyFormSite').onsubmit = async (e) => {
       e.preventDefault();
       const payload = {
-        date: document.getElementById('logDate').value,
-        flow_intensity: selectedFlow,
-        mood: selectedMood,
-        symptoms: selectedSymptoms.join(','),
-        notes: document.getElementById('logNotes').value
+        date: document.getElementById('dailyLogDate').value,
+        flow_intensity: selFlow,
+        mood: selMood,
+        symptoms: selSymptoms.join(','),
+        notes: document.getElementById('dailyNotes').value
       };
       await fetch('/api/logs', {
         method: 'POST',
@@ -807,67 +1072,7 @@
         body: JSON.stringify(payload)
       });
       alert('Daily log saved!');
-    });
-
-    loadDashboardData();
-
-    // --- 5. Auth & Onboarding Modal Handlers ---
-    const authModal = document.getElementById('authModal');
-    const openAuthBtn = document.getElementById('openAuthModalBtn');
-    const closeAuthBtn = document.getElementById('closeAuthModalBtn');
-    const toggleAuthMode = document.getElementById('toggleAuthMode');
-    let isRegisterMode = false;
-
-    openAuthBtn.onclick = () => authModal.classList.add('active');
-    closeAuthBtn.onclick = () => authModal.classList.remove('active');
-
-    toggleAuthMode.onclick = (e) => {
-      e.preventDefault();
-      isRegisterMode = !isRegisterMode;
-      document.getElementById('authModalTitle').textContent = isRegisterMode ? 'Create Your Account' : 'Welcome Back';
-      document.getElementById('authSubmitBtn').textContent = isRegisterMode ? 'Sign Up & Start Setup' : 'Sign In';
-      document.getElementById('authToggleText').textContent = isRegisterMode ? 'Already have an account?' : 'New to FlowTrack?';
-      toggleAuthMode.textContent = isRegisterMode ? 'Sign In' : 'Create an account';
     };
-
-    document.getElementById('authForm').onsubmit = (e) => {
-      e.preventDefault();
-      if (isRegisterMode) {
-        document.getElementById('authView').classList.add('hidden');
-        document.getElementById('onboardingView').classList.remove('hidden');
-      } else {
-        authModal.classList.remove('active');
-        openAuthBtn.textContent = 'My Account';
-      }
-    };
-
-    function nextOnboardingStep(step) {
-      document.querySelectorAll('.onboarding-step').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.step-bar').forEach(el => el.classList.remove('active'));
-      
-      document.getElementById(`onbStep${step}`).classList.remove('hidden');
-      for (let i = 1; i <= step; i++) {
-        document.getElementById(`sb${i}`).classList.add('active');
-      }
-    }
-
-    async function finishOnboarding() {
-      const initialStartDate = document.getElementById('onbStartDate').value;
-      const initialCycleLength = parseInt(document.getElementById('onbCycleLength').value, 10);
-      const initialPeriodLength = parseInt(document.getElementById('onbPeriodLength').value, 10);
-
-      if (initialStartDate) {
-        await fetch('/api/cycles', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ start_date: initialStartDate, period_length: initialPeriodLength })
-        });
-      }
-
-      authModal.classList.remove('active');
-      openAuthBtn.textContent = 'My Account';
-      loadDashboardData();
-    }
   </script>
 </body>
 </html>
