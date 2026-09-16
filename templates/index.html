@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
   <title>FlowTrack — Menstrual Health & Cycle Insights</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -110,76 +109,18 @@
       left: 0;
       right: 0;
       height: 1.5px;
-      background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%,
-=======
-  <title>FlowTrack — Cycle & Symptom Tracker</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --bg-dark: #201018;
-      --bg-gradient: radial-gradient(circle at 25% 25%, #3d1b2c 0%, #201018 60%, #12070e 100%);
-      --glass-surface: rgba(255, 255, 255, 0.08);
-      --glass-surface-hover: rgba(255, 255, 255, 0.13);
-      --glass-border: rgba(255, 255, 255, 0.16);
-      --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.38);
-      --accent-pink: #ff5c8a;
-      --accent-pink-hover: #ff336e;
-      --accent-soft: #fecdd3;
-      --accent-glow: rgba(255, 92, 138, 0.4);
-      --text-bright: #ffffff;
-      --text-dim: #c9b4be;
-      --card-radius: 28px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    body {
-      background: var(--bg-gradient);
-      background-color: var(--bg-dark);
-      min-height: 100vh;
-      color: var(--text-bright);
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    /* Falling Petals Particle Canvas */
-    #petals-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, var(--glass-specular) 50%, rgba(255, 255, 255, 0) 100%);
       pointer-events: none;
-      z-index: 0;
     }
 
-    /* Ambient Background Glow */
-    .glow-spot {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(100px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .glow-1 { top: 10%; left: 8%; width: 420px; height: 420px; background: rgba(255, 92, 138, 0.16); }
-    .glow-2 { bottom: 12%; right: 8%; width: 480px; height: 480px; background: rgba(214, 75, 126, 0.14); }
-
-    /* Screen Views Manager */
+    /* View Switcher */
     .screen-view {
       position: relative;
       z-index: 1;
       min-height: 100vh;
       display: none;
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(12px);
       transition: opacity 0.4s ease, transform 0.4s ease;
     }
     .screen-view.active {
@@ -188,226 +129,167 @@
       transform: translateY(0);
     }
 
-    /* Glassmorphic Card */
-    .glass-card {
-      background: var(--glass-surface);
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--card-radius);
-      box-shadow: var(--glass-shadow);
-      padding: 36px;
-      transition: transform 0.25s ease-out, box-shadow 0.25s ease;
-      position: relative;
-    }
-
-    /* ========================================================
-       REALISTIC FLEUR-STYLE PEONY & ROSE SHOWCASE
-       ======================================================== */
-    /* Mini Peony Badge for Auth Screen */
-    .peony-auth-badge {
-      width: 86px;
-      height: 86px;
-      margin: 0 auto 18px;
-      border-radius: 50%;
-      padding: 4px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 92, 138, 0.4));
-      box-shadow: 0 8px 24px var(--accent-glow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .peony-auth-badge img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      animation: gentleBreathe 8s ease-in-out infinite alternate;
-    }
-
-    /* Large Editorial Peony Window for Dashboard */
-    .peony-hero-window {
-      width: 100%;
-      height: 380px;
-      border-radius: 24px;
-      position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), inset 0 0 40px rgba(255, 180, 205, 0.2);
-    }
-
-    .peony-hero-window img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: scale(1.03);
-      animation: subtlePan 14s ease-in-out infinite alternate;
-      filter: contrast(105%) saturate(110%);
-    }
-
-    /* Dreamy mist overlay on the flower window */
-    .peony-hero-window::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(61, 27, 44, 0.05) 0%, rgba(32, 16, 24, 0.4) 100%);
-      pointer-events: none;
-    }
-
-    .flower-caption {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-      z-index: 2;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 10px 16px;
-      border-radius: 14px;
-      font-family: 'Playfair Display', serif;
-      font-size: 0.95rem;
-      color: #fff;
-      text-align: center;
-      font-style: italic;
-    }
-
-    @keyframes gentleBreathe {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.08); }
-    }
-
-    @keyframes subtlePan {
-      0% { transform: scale(1.03) translateY(0); }
-      100% { transform: scale(1.1) translateY(-8px); }
-    }
-
     /* ========================================================
        SCREEN 1: AUTHENTICATION (FIRST)
        ======================================================== */
     #authScreen {
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 40px 24px;
     }
 
-    .auth-box {
+    .auth-card {
       width: 100%;
-      max-width: 440px;
+      max-width: 460px;
+      padding: 48px 40px;
       text-align: center;
     }
 
-    .auth-title {
+    /* Floating Peony Emblem */
+    .peony-emblem {
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 24px;
+      border-radius: 50%;
+      padding: 5px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(246, 214, 222, 0.5));
+      box-shadow: 0 14px 28px rgba(200, 105, 133, 0.16);
+      position: relative;
+      animation: gentleFloat 6s ease-in-out infinite alternate;
+    }
+
+    .peony-emblem img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    @keyframes gentleFloat {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-8px); }
+    }
+
+    .editorial-title {
       font-family: 'Playfair Display', serif;
-      font-size: 2rem;
+      font-size: 2.1rem;
+      font-weight: 500;
+      color: var(--text-main);
       margin-bottom: 6px;
-      letter-spacing: -0.3px;
+      letter-spacing: -0.4px;
     }
 
-    .auth-subtitle {
-      color: var(--text-dim);
+    .editorial-sub {
+      color: var(--text-muted);
       font-size: 0.95rem;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
+      font-weight: 400;
     }
 
-    .tab-switch {
+    /* Segmented Tab Switch */
+    .cream-tabs {
       display: flex;
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(235, 220, 225, 0.45);
       padding: 4px;
-      border-radius: 9999px;
-      border: 1px solid var(--glass-border);
-      margin-bottom: 24px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      margin-bottom: 28px;
     }
 
-    .tab-btn {
+    .cream-tab-btn {
       flex: 1;
       padding: 10px 0;
-      border-radius: 9999px;
+      border-radius: var(--radius-pill);
       border: none;
       background: transparent;
-      color: var(--text-dim);
+      color: var(--text-muted);
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       cursor: pointer;
       transition: all 0.25s ease;
     }
 
-    .tab-btn.active {
-      background: var(--accent-pink);
-      color: #fff;
-      box-shadow: 0 4px 14px var(--accent-glow);
+    .cream-tab-btn.active {
+      background: #ffffff;
+      color: var(--text-main);
+      box-shadow: 0 4px 12px rgba(61, 41, 49, 0.06);
     }
 
-    .input-label {
-      display: block;
+    .form-group {
       text-align: left;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-dim);
-      margin-bottom: 6px;
+      margin-bottom: 18px;
     }
 
-    .custom-input {
+    .cream-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cream-input {
       width: 100%;
-      padding: 12px 18px;
-      border-radius: 14px;
-      border: 1px solid var(--glass-border);
-      background: rgba(255, 255, 255, 0.92);
-      color: #3b2a30;
+      padding: 13px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(212, 175, 185, 0.35);
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text-main);
       font-size: 0.95rem;
       outline: none;
-      margin-bottom: 18px;
-      transition: border 0.2s, box-shadow 0.2s;
+      transition: border 0.2s, box-shadow 0.2s, background 0.2s;
     }
 
-    .custom-input:focus {
+    .cream-input:focus {
+      background: #ffffff;
       border-color: var(--accent-pink);
-      box-shadow: 0 0 0 3px rgba(255, 92, 138, 0.3);
+      box-shadow: 0 0 0 4px rgba(200, 105, 133, 0.12);
     }
 
-    .btn-pink-glow {
+    .btn-mauve-pill {
       width: 100%;
-      padding: 14px;
-      border-radius: 9999px;
+      padding: 15px;
+      border-radius: var(--radius-pill);
       border: none;
-      background: linear-gradient(135deg, var(--accent-pink), var(--accent-pink-hover));
-      color: #fff;
-      font-weight: 700;
-      font-size: 1rem;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-mauve));
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.98rem;
       cursor: pointer;
-      box-shadow: 0 8px 24px var(--accent-glow);
+      box-shadow: 0 10px 24px rgba(200, 105, 133, 0.28);
       transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 8px;
     }
 
-    .btn-pink-glow:hover {
+    .btn-mauve-pill:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(255, 92, 138, 0.6);
+      box-shadow: 0 14px 28px rgba(200, 105, 133, 0.38);
     }
 
     .divider {
       display: flex;
       align-items: center;
-      margin: 22px 0 16px;
-      color: var(--text-dim);
+      margin: 24px 0 18px;
+      color: var(--text-muted);
       font-size: 0.8rem;
     }
     .divider::before, .divider::after {
       content: '';
       flex: 1;
       height: 1px;
-      background: var(--glass-border);
+      background: rgba(212, 175, 185, 0.25);
     }
-    .divider span { padding: 0 12px; }
+    .divider span { padding: 0 14px; }
 
-    .btn-google {
+    .btn-google-soft {
       width: 100%;
-      padding: 12px;
-      border-radius: 9999px;
-      border: 1px solid var(--glass-border);
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
+      padding: 13px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--text-main);
       font-size: 0.92rem;
       font-weight: 600;
       cursor: pointer;
@@ -417,8 +299,8 @@
       gap: 10px;
       transition: background 0.2s, transform 0.2s;
     }
-    .btn-google:hover {
-      background: rgba(255, 255, 255, 0.2);
+    .btn-google-soft:hover {
+      background: #ffffff;
       transform: translateY(-1px);
     }
 
@@ -428,273 +310,343 @@
     #onboardingScreen {
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 40px 24px;
     }
 
-    .onboarding-box {
+    .onboarding-card {
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
+      padding: 48px 42px;
     }
 
-    .progress-bar-wrap {
+    .step-track {
       display: flex;
       gap: 8px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
-
-    .p-bar {
+    .step-pill {
       flex: 1;
       height: 4px;
-      border-radius: 99px;
-      background: rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-pill);
+      background: rgba(200, 105, 133, 0.15);
     }
-    .p-bar.active { background: var(--accent-pink); }
+    .step-pill.active { background: var(--accent-pink); }
 
     .q-step { display: none; }
     .q-step.active { display: block; }
 
-    .badge-step {
+    .soft-badge {
       display: inline-block;
-      padding: 4px 12px;
-      border-radius: 999px;
-      background: rgba(255, 92, 138, 0.2);
-      color: var(--accent-soft);
+      padding: 4px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--accent-soft-pink);
+      color: var(--accent-mauve);
       font-size: 0.78rem;
       font-weight: 700;
       text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .q-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.7rem;
-      margin-bottom: 8px;
-    }
-
-    .q-desc {
-      color: var(--text-dim);
-      font-size: 0.9rem;
-      margin-bottom: 22px;
+      letter-spacing: 0.6px;
+      margin-bottom: 14px;
     }
 
     /* ========================================================
-       SCREEN 3: MAIN DASHBOARD SITE (THIRD)
+       SCREEN 3: MAIN DASHBOARD (THIRD)
        ======================================================== */
     #siteScreen {
       flex-direction: column;
-      padding: 24px 20px 80px;
-      max-width: 1200px;
+      padding: 36px 32px 100px;
+      max-width: 1240px;
       margin: 0 auto;
       width: 100%;
     }
 
-    .top-nav {
+    .navbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 28px;
+      margin-bottom: 40px;
     }
 
-    .nav-brand {
+    .brand-group {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
-    .nav-brand img {
-      width: 38px;
-      height: 38px;
+    .brand-group img {
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       object-fit: cover;
-      border: 1px solid var(--glass-border);
+      box-shadow: 0 6px 14px rgba(200, 105, 133, 0.2);
     }
 
-    .nav-brand h2 {
+    .brand-group h2 {
       font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
+      font-size: 1.9rem;
+      font-weight: 500;
+      color: var(--text-main);
     }
 
-    .btn-nav-outline {
-      padding: 8px 20px;
-      border-radius: 999px;
-      border: 1px solid var(--glass-border);
-      background: var(--glass-surface);
-      color: var(--text-dim);
+    .btn-subtle {
+      padding: 9px 22px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      background: var(--surface-cream);
+      color: var(--text-muted);
       font-size: 0.85rem;
+      font-weight: 500;
       cursor: pointer;
       backdrop-filter: blur(10px);
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
-    .btn-nav-outline:hover {
-      color: #fff;
+    .btn-subtle:hover {
+      background: #ffffff;
+      color: var(--text-main);
       border-color: var(--accent-pink);
     }
 
-    /* Hero Banner: Info on Left + Peony Showcase on Right */
-    .hero-banner {
+    /* Editorial Hero: Negative Space & Large Floral Window */
+    .hero-editorial {
       display: grid;
       grid-template-columns: 1.15fr 0.85fr;
-      gap: 32px;
-      margin-bottom: 30px;
+      gap: 40px;
+      padding: 48px;
       align-items: center;
+      margin-bottom: 40px;
     }
 
-    @media (max-width: 920px) {
-      .hero-banner { grid-template-columns: 1fr; }
+    @media (max-width: 940px) {
+      .hero-editorial { grid-template-columns: 1fr; padding: 32px; gap: 32px; }
     }
 
-    .hero-content h2 {
+    .hero-content h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 2.6rem;
+      font-size: 3rem;
+      font-weight: 500;
       line-height: 1.15;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
+      letter-spacing: -0.5px;
     }
 
-    .hero-stats-row {
+    .hero-meta {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .stats-trio {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 24px;
+      gap: 16px;
     }
 
-    .hero-stat-card {
-      background: rgba(255, 255, 255, 0.05);
+    .stat-tile {
+      background: rgba(255, 255, 255, 0.6);
       border: 1px solid var(--glass-border);
-      border-radius: 18px;
-      padding: 14px;
+      border-radius: 20px;
+      padding: 16px 14px;
       text-align: center;
+      box-shadow: 0 4px 12px rgba(61, 41, 49, 0.03);
     }
 
-    .hero-stat-card .val {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--accent-soft);
-      margin-top: 4px;
-    }
-
-    .hero-stat-card .lbl {
-      font-size: 0.76rem;
-      color: var(--text-dim);
+    .stat-tile .lbl {
+      font-size: 0.74rem;
+      font-weight: 600;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
     }
 
-    /* Pill Selection Buttons */
-    .pill-container {
+    .stat-tile .val {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--accent-pink);
+    }
+
+    /* Fleur-Style Lush Peony Showcase Window */
+    .fleur-floral-window {
+      width: 100%;
+      height: 420px;
+      border-radius: 28px;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-elevated);
+    }
+
+    .fleur-floral-window img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.04);
+      animation: slowBreath 12s ease-in-out infinite alternate;
+      filter: saturate(105%) contrast(102%);
+    }
+
+    @keyframes slowBreath {
+      0% { transform: scale(1.04); }
+      100% { transform: scale(1.1) translateY(-6px); }
+    }
+
+    .floral-floating-tag {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      padding: 14px 20px;
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(61, 41, 49, 0.06);
+    }
+
+    .floral-floating-tag p {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--text-main);
+    }
+
+    /* Pill Selection Controls */
+    .pill-wrap {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 22px;
     }
 
-    .pill-btn {
-      padding: 8px 18px;
-      border-radius: 9999px;
-      border: 1.5px solid var(--glass-border);
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text-dim);
+    .pill-chip {
+      padding: 9px 20px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(212, 175, 185, 0.35);
+      background: rgba(255, 255, 255, 0.65);
+      color: var(--text-main);
       font-size: 0.88rem;
       font-weight: 500;
       cursor: pointer;
       user-select: none;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.2, 0, 0.1, 1);
     }
 
-    .pill-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
+    .pill-chip:hover {
+      background: #ffffff;
+      border-color: var(--accent-pink);
       transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(200, 105, 133, 0.1);
     }
 
-    .pill-btn.active {
+    .pill-chip.active {
       background: var(--accent-pink);
       color: #ffffff;
       border-color: var(--accent-pink);
-      box-shadow: 0 4px 14px var(--accent-glow);
+      box-shadow: 0 6px 16px rgba(200, 105, 133, 0.3);
       transform: translateY(-1px);
     }
 
-    /* Grids */
-    .main-grid {
+    /* Dashboard 2-Column Split */
+    .dashboard-split {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-bottom: 28px;
+      gap: 32px;
     }
 
-    @media (max-width: 860px) {
-      .main-grid { grid-template-columns: 1fr; }
+    @media (max-width: 880px) {
+      .dashboard-split { grid-template-columns: 1fr; }
     }
 
-    .table-history {
+    .dashboard-card {
+      padding: 40px;
+    }
+
+    .card-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+      color: var(--text-main);
+    }
+
+    /* Minimal Cycle History Table */
+    .cycle-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 14px;
+      margin-top: 16px;
     }
 
-    .table-history th {
+    .cycle-table th {
       text-align: left;
-      font-size: 0.8rem;
+      font-size: 0.76rem;
       text-transform: uppercase;
-      color: var(--text-dim);
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
       padding: 10px 12px;
-      border-bottom: 1px solid var(--glass-border);
+      border-bottom: 1px solid rgba(212, 175, 185, 0.25);
     }
 
-    .table-history td {
-      padding: 14px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      font-size: 0.92rem;
+    .cycle-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid rgba(212, 175, 185, 0.12);
+      font-size: 0.95rem;
     }
 
-    .btn-remove {
+    .btn-del {
       background: none;
       border: none;
-      color: #ff6b8b;
+      color: var(--accent-pink);
       font-weight: 600;
       cursor: pointer;
+      font-size: 0.85rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- Falling Petal Particles Simulation -->
-  <canvas id="petals-canvas"></canvas>
+  <!-- Floating Ambient Blur Spheres -->
+  <div class="floating-orb orb-1"></div>
+  <div class="floating-orb orb-2"></div>
 
-  <!-- Ambient Glow Spots -->
-  <div class="glow-spot glow-1"></div>
-  <div class="glow-spot glow-2"></div>
+  <!-- Falling Petal Particles Canvas -->
+  <canvas id="petals-canvas"></canvas>
 
   <!-- ========================================================
        SCREEN 1: AUTHENTICATION (FIRST)
        ======================================================== -->
   <section class="screen-view active" id="authScreen">
-    <div class="glass-card auth-box">
-      <!-- Peony Blossom Emblem -->
-      <div class="peony-auth-badge">
-        <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=300&q=80" alt="Blush Peony Bloom">
+    <div class="frosted-panel auth-card">
+      <div class="peony-emblem">
+        <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=300&q=80" alt="Blush Peony">
       </div>
 
-      <h1 class="auth-title">Welcome to FlowTrack</h1>
-      <p class="auth-subtitle">Sign in to see your cycle insights</p>
+      <h1 class="editorial-title">Welcome to FlowTrack</h1>
+      <p class="editorial-sub">Sign in to observe your cycle insights and rhythms</p>
 
-      <div class="tab-switch">
-        <button class="tab-btn active" id="tabSignInBtn">Sign In</button>
-        <button class="tab-btn" id="tabCreateBtn">Create Account</button>
+      <div class="cream-tabs">
+        <button class="cream-tab-btn active" id="tabSign">Sign In</button>
+        <button class="cream-tab-btn" id="tabRegister">Create Account</button>
       </div>
 
-      <form id="authFormMain">
-        <label class="input-label">Email</label>
-        <input type="email" class="custom-input" id="authEmailInput" placeholder="you@example.com" required>
+      <form id="authFormElement">
+        <div class="form-group">
+          <label class="cream-label">Email</label>
+          <input type="email" class="cream-input" id="inputEmail" placeholder="you@example.com" required>
+        </div>
 
-        <label class="input-label">Password</label>
-        <input type="password" class="custom-input" id="authPassInput" placeholder="••••••••" required>
+        <div class="form-group">
+          <label class="cream-label">Password</label>
+          <input type="password" class="cream-input" id="inputPassword" placeholder="••••••••" required>
+        </div>
 
-        <button type="submit" class="btn-pink-glow" id="authActionBtn">Sign In</button>
+        <button type="submit" class="btn-mauve-pill" id="btnSubmitAuth">Sign In</button>
       </form>
 
       <div class="divider"><span>or</span></div>
 
-      <button type="button" class="btn-google" id="googleLoginBtn">
+      <button type="button" class="btn-google-soft" id="btnGoogleSignIn">
         <svg width="18" height="18" viewBox="0 0 24 24">
           <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
           <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.8z"/>
@@ -704,9 +656,9 @@
         Continue with Google
       </button>
 
-      <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 20px;">
-        <span id="footerTogglePrompt">New here?</span>
-        <a href="#" id="footerToggleLink" style="color: var(--accent-pink); font-weight: 600; text-decoration: none;">Create an account</a>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 24px;">
+        <span id="txtPromptToggle">New here?</span>
+        <a href="#" id="linkModeToggle" style="color: var(--accent-pink); font-weight: 600; text-decoration: none;">Create an account</a>
       </p>
     </div>
   </section>
@@ -715,51 +667,57 @@
        SCREEN 2: ONBOARDING QUESTIONS (SECOND)
        ======================================================== -->
   <section class="screen-view" id="onboardingScreen">
-    <div class="glass-card onboarding-box">
-      <div class="progress-bar-wrap">
-        <div class="p-bar active" id="pb1"></div>
-        <div class="p-bar" id="pb2"></div>
-        <div class="p-bar" id="pb3"></div>
+    <div class="frosted-panel onboarding-card">
+      <div class="step-track">
+        <div class="step-pill active" id="sp1"></div>
+        <div class="step-pill" id="sp2"></div>
+        <div class="step-pill" id="sp3"></div>
       </div>
 
       <!-- Question 1: Start Date -->
-      <div class="q-step active" id="qStep1">
-        <span class="badge-step">Question 1 of 3</span>
-        <h2 class="q-title">When did your last period start?</h2>
-        <p class="q-desc">Pick the first day your bleeding began to initialize your tracking cycle.</p>
-        <input type="date" class="custom-input" id="qStartDate">
-        <button type="button" class="btn-pink-glow" onclick="goToStep(2)">Continue &rarr;</button>
+      <div class="q-step active" id="onbQ1">
+        <span class="soft-badge">Question 1 of 3</span>
+        <h2 class="editorial-title" style="margin-bottom: 10px;">When did your last period begin?</h2>
+        <p class="editorial-sub">Select the first day bleeding started to initialize your tracker.</p>
+        <div class="form-group">
+          <input type="date" class="cream-input" id="initStartDate">
+        </div>
+        <button type="button" class="btn-mauve-pill" onclick="advanceStep(2)">Continue &rarr;</button>
       </div>
 
-      <!-- Question 2: Cycle Durations -->
-      <div class="q-step" id="qStep2">
-        <span class="badge-step">Question 2 of 3</span>
-        <h2 class="q-title">Cycle & Period Durations</h2>
-        <p class="q-desc">Standard averages are filled in; adjust them to what feels closest for you.</p>
+      <!-- Question 2: Lengths -->
+      <div class="q-step" id="onbQ2">
+        <span class="soft-badge">Question 2 of 3</span>
+        <h2 class="editorial-title" style="margin-bottom: 10px;">Cycle & Period Durations</h2>
+        <p class="editorial-sub">General averages are prefilled; adjust if you know your typical days.</p>
 
-        <label class="input-label">Cycle Length (days from start to start)</label>
-        <input type="number" class="custom-input" id="qCycleLength" value="28" min="18" max="50">
-
-        <label class="input-label">Period Bleeding Duration (days)</label>
-        <input type="number" class="custom-input" id="qPeriodLength" value="5" min="1" max="14">
-
-        <button type="button" class="btn-pink-glow" onclick="goToStep(3)">Continue &rarr;</button>
-      </div>
-
-      <!-- Question 3: Primary Goal -->
-      <div class="q-step" id="qStep3">
-        <span class="badge-step">Question 3 of 3</span>
-        <h2 class="q-title">What is your main goal?</h2>
-        <p class="q-desc">We will tailor your prediction highlights and fertile cues accordingly.</p>
-
-        <div class="pill-container" id="goalPillGroup">
-          <span class="pill-btn active" data-goal="track">🌸 Track Cycle & Symptoms</span>
-          <span class="pill-btn" data-goal="conceive">✨ Plan Pregnancy (Fertility)</span>
-          <span class="pill-btn" data-goal="prevent">🛡️ Avoid Pregnancy</span>
-          <span class="pill-btn" data-goal="health">🌿 General Body Awareness</span>
+        <div class="form-group">
+          <label class="cream-label">Cycle Length (days between periods)</label>
+          <input type="number" class="cream-input" id="initCycleLen" value="28" min="20" max="50">
         </div>
 
-        <button type="button" class="btn-pink-glow" onclick="finishOnboardingToSite()">Enter FlowTrack</button>
+        <div class="form-group">
+          <label class="cream-label">Period Length (days bleeding)</label>
+          <input type="number" class="cream-input" id="initPeriodLen" value="5" min="1" max="14">
+        </div>
+
+        <button type="button" class="btn-mauve-pill" onclick="advanceStep(3)">Continue &rarr;</button>
+      </div>
+
+      <!-- Question 3: Focus Goal -->
+      <div class="q-step" id="onbQ3">
+        <span class="soft-badge">Question 3 of 3</span>
+        <h2 class="editorial-title" style="margin-bottom: 10px;">What is your primary goal?</h2>
+        <p class="editorial-sub">We personalize your ovulation cues and fertile windows to fit your journey.</p>
+
+        <div class="pill-wrap" id="onbGoals" style="margin-bottom: 28px;">
+          <span class="pill-chip active" data-goal="track">🌸 Track Cycle & Symptoms</span>
+          <span class="pill-chip" data-goal="conceive">✨ Plan Pregnancy</span>
+          <span class="pill-chip" data-goal="prevent">🛡️ Avoid Pregnancy</span>
+          <span class="pill-chip" data-goal="wellness">🌿 General Health Awareness</span>
+        </div>
+
+        <button type="button" class="btn-mauve-pill" onclick="completeOnboarding()">Enter FlowTrack</button>
       </div>
     </div>
   </section>
@@ -769,114 +727,120 @@
        ======================================================== -->
   <section class="screen-view" id="siteScreen">
     <!-- Navbar -->
-    <header class="top-nav">
-      <div class="nav-brand">
+    <header class="navbar">
+      <div class="brand-group">
         <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=100&q=80" alt="FlowTrack">
         <h2>FlowTrack</h2>
       </div>
       <div>
-        <button class="btn-nav-outline" onclick="returnToAuth()">Switch User / Logout</button>
+        <button class="btn-subtle" onclick="switchToAuth()">Log Out / Account</button>
       </div>
     </header>
 
-    <!-- Large Blooming Peony Hero Showcase -->
-    <div class="glass-card hero-banner">
+    <!-- Editorial Hero Showcase -->
+    <div class="frosted-panel hero-editorial">
       <div class="hero-content">
-        <span class="badge-step">Cycle Forecast</span>
-        <h2 id="nextPeriodHeader">Next Period in -- Days</h2>
-        <p style="color: var(--text-dim); margin-bottom: 10px;">
-          Estimated Ovulation: <strong id="ovulationDayHeader" style="color: var(--accent-soft);">--</strong>
-        </p>
-        <p style="color: var(--text-dim);">
-          Fertile Window: <strong id="fertileWindowHeader" style="color: #fff;">--</strong>
+        <span class="soft-badge">Current Rhythm</span>
+        <h1 id="dispNextPeriod">Next Period in -- Days</h1>
+        <p class="hero-meta">
+          Estimated Ovulation: <strong id="dispOvulation" style="color: var(--accent-mauve);">--</strong><br>
+          Fertile Window: <strong id="dispFertile" style="color: var(--text-main);">Calculating...</strong>
         </p>
 
-        <div class="hero-stats-row">
-          <div class="hero-stat-card">
+        <div class="stats-trio">
+          <div class="stat-tile">
             <div class="lbl">Avg Cycle</div>
-            <div class="val" id="statCycleLen">28 d</div>
+            <div class="val" id="dispAvgCycle">28 d</div>
           </div>
-          <div class="hero-stat-card">
+          <div class="stat-tile">
             <div class="lbl">Avg Period</div>
-            <div class="val" id="statPeriodLen">5 d</div>
+            <div class="val" id="dispAvgPeriod">5 d</div>
           </div>
-          <div class="hero-stat-card">
-            <div class="lbl">Logged Cycles</div>
-            <div class="val" id="statCycleCount">0</div>
+          <div class="stat-tile">
+            <div class="lbl">Recorded</div>
+            <div class="val" id="dispCount">0</div>
           </div>
         </div>
       </div>
 
-      <!-- The Fleur-Style Misty Blooming Peony Showcase Window -->
-      <div class="peony-hero-window">
-        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=85" alt="Lush blooming garden roses and peonies in mist">
-        <div class="flower-caption">
-          "Flowers expressing rhythm, warmth, and emotion"
+      <!-- Fleur Peony Art Window -->
+      <div class="fleur-floral-window">
+        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=85" alt="Peonies in Soft Focus">
+        <div class="floral-floating-tag">
+          <p>"Flowers expressing rhythm, emotions, and care"</p>
         </div>
       </div>
     </div>
 
-    <!-- Main Content Form Grids -->
-    <div class="main-grid">
-      <!-- Daily Symptoms & Mood Check-In -->
-      <div class="glass-card">
-        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 16px;">Daily Check-In</h3>
-        <form id="dailyFormSite">
-          <label class="input-label">Date</label>
-          <input type="date" class="custom-input" id="dailyLogDate" required>
-
-          <label class="input-label">Flow Intensity</label>
-          <div class="pill-container" id="flowPillList">
-            <span class="pill-btn" data-v="None">⚪ None</span>
-            <span class="pill-btn" data-v="Spotting">🌸 Spotting</span>
-            <span class="pill-btn" data-v="Light">💧 Light</span>
-            <span class="pill-btn" data-v="Medium">🌧️ Medium</span>
-            <span class="pill-btn" data-v="Heavy">🌊 Heavy</span>
+    <!-- 2-Column Split for Logging & History -->
+    <div class="dashboard-split">
+      <!-- Daily Log Check-in Form -->
+      <div class="frosted-panel dashboard-card">
+        <h3 class="card-heading">Daily Check-In</h3>
+        <form id="formDailyLog">
+          <div class="form-group" style="max-width: 240px;">
+            <label class="cream-label">Date</label>
+            <input type="date" class="cream-input" id="fieldLogDate" required>
           </div>
 
-          <label class="input-label">Mood</label>
-          <div class="pill-container" id="moodPillList">
-            <span class="pill-btn" data-v="Calm">🧘 Calm</span>
-            <span class="pill-btn" data-v="Happy">✨ Happy</span>
-            <span class="pill-btn" data-v="Emotional">🥺 Sensitive</span>
-            <span class="pill-btn" data-v="Tense">⚡ Irritable</span>
-            <span class="pill-btn" data-v="Tired">😴 Exhausted</span>
+          <label class="cream-label">Flow Intensity</label>
+          <div class="pill-wrap" id="pillsFlow">
+            <span class="pill-chip active" data-val="None">⚪ None</span>
+            <span class="pill-chip" data-val="Spotting">🌸 Spotting</span>
+            <span class="pill-chip" data-val="Light">💧 Light</span>
+            <span class="pill-chip" data-val="Medium">🌧️ Medium</span>
+            <span class="pill-chip" data-val="Heavy">🌊 Heavy</span>
           </div>
 
-          <label class="input-label">Symptoms</label>
-          <div class="pill-container" id="symptomPillList">
-            <span class="pill-btn" data-v="Cramps">🩸 Cramps</span>
-            <span class="pill-btn" data-v="Headache">🤕 Headache</span>
-            <span class="pill-btn" data-v="Bloating">🎈 Bloating</span>
-            <span class="pill-btn" data-v="Acne">🫧 Acne</span>
-            <span class="pill-btn" data-v="Cravings">🍫 Cravings</span>
+          <label class="cream-label">Mood</label>
+          <div class="pill-wrap" id="pillsMood">
+            <span class="pill-chip active" data-val="Calm">🧘 Calm</span>
+            <span class="pill-chip" data-val="Happy">✨ Happy</span>
+            <span class="pill-chip" data-val="Sensitive">🥺 Sensitive</span>
+            <span class="pill-chip" data-val="Irritable">⚡ Irritable</span>
+            <span class="pill-chip" data-val="Exhausted">😴 Exhausted</span>
           </div>
 
-          <label class="input-label">Notes</label>
-          <textarea class="custom-input" id="dailyNotes" rows="2" placeholder="Journal thoughts..."></textarea>
+          <label class="cream-label">Symptoms</label>
+          <div class="pill-wrap" id="pillsSymptoms">
+            <span class="pill-chip" data-val="Cramps">🩸 Cramps</span>
+            <span class="pill-chip" data-val="Headache">🤕 Headache</span>
+            <span class="pill-chip" data-val="Bloating">🎈 Bloating</span>
+            <span class="pill-chip" data-val="Acne">🫧 Acne</span>
+            <span class="pill-chip" data-val="Cravings">🍫 Cravings</span>
+          </div>
 
-          <button type="submit" class="btn-pink-glow">Save Entry</button>
+          <div class="form-group">
+            <label class="cream-label">Journal Notes</label>
+            <textarea class="cream-input" id="fieldNotes" rows="2" placeholder="Write thoughts or notes..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-mauve-pill" style="max-width: 260px;">Save Check-In</button>
         </form>
       </div>
 
       <!-- Right Column: Record New Cycle & History -->
-      <div style="display: flex; flex-direction: column; gap: 24px;">
-        <div class="glass-card">
-          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 12px;">Log New Cycle Start</h3>
-          <form id="newCycleFormSite">
-            <label class="input-label">Start Date (Bleeding day 1)</label>
-            <input type="date" class="custom-input" id="newCycleStart" required>
+      <div style="display: flex; flex-direction: column; gap: 32px;">
+        <div class="frosted-panel dashboard-card">
+          <h3 class="card-heading">Log New Cycle Start</h3>
+          <form id="formNewCycle">
+            <div class="form-group">
+              <label class="cream-label">Start Date (Day 1 of bleeding)</label>
+              <input type="date" class="cream-input" id="fieldCycleStart" required>
+            </div>
 
-            <label class="input-label">Period Duration (days)</label>
-            <input type="number" class="custom-input" id="newCyclePeriod" value="5" min="1" max="14" required>
+            <div class="form-group">
+              <label class="cream-label">Period Duration (days)</label>
+              <input type="number" class="cream-input" id="fieldCycleDays" value="5" min="1" max="14" required>
+            </div>
 
-            <button type="submit" class="btn-pink-glow">Log Cycle</button>
+            <button type="submit" class="btn-mauve-pill">Record Cycle</button>
           </form>
         </div>
 
-        <div class="glass-card">
-          <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 12px;">Cycle History</h3>
-          <table class="table-history">
+        <div class="frosted-panel dashboard-card">
+          <h3 class="card-heading">Cycle History</h3>
+          <table class="cycle-table">
             <thead>
               <tr>
                 <th>Start Date</th>
@@ -884,8 +848,8 @@
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody id="cycleTableRows">
-              <tr><td colspan="3" style="text-align: center; color: var(--text-dim);">No cycles recorded.</td></tr>
+            <tbody id="tableCyclesBody">
+              <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No cycles recorded yet.</td></tr>
             </tbody>
           </table>
         </div>
@@ -893,9 +857,11 @@
     </div>
   </section>
 
-  <!-- Scripts -->
+  <!-- ========================================================
+       JAVASCRIPT: PETALS, TRANSITIONS & API SYNC
+       ======================================================== -->
   <script>
-    // Falling Petal Simulation
+    // --- 1. Falling Petals Simulation ---
     const canvas = document.getElementById('petals-canvas');
     const ctx = canvas.getContext('2d');
     let cw = canvas.width = window.innerWidth;
@@ -906,16 +872,16 @@
       ch = canvas.height = window.innerHeight;
     });
 
-    const petals = Array.from({ length: 28 }, () => ({
+    const petals = Array.from({ length: 26 }, () => ({
       x: Math.random() * cw,
       y: Math.random() * ch - ch,
       size: Math.random() * 10 + 8,
-      speedX: Math.random() * 1.4 - 0.7,
-      speedY: Math.random() * 1.5 + 0.9,
+      speedX: Math.random() * 1.2 - 0.6,
+      speedY: Math.random() * 1.4 + 0.8,
       rotation: Math.random() * 360,
-      spin: Math.random() * 1.8 - 0.9,
-      opacity: Math.random() * 0.5 + 0.3,
-      color: ['#fecdd3', '#fda4af', '#f472b6', '#fff1f2'][Math.floor(Math.random() * 4)]
+      spin: Math.random() * 1.4 - 0.7,
+      opacity: Math.random() * 0.45 + 0.25,
+      color: ['#fbcfe8', '#fce7f3', '#fde2e8', '#fff1f2'][Math.floor(Math.random() * 4)]
     }));
 
     function drawPetal(p) {
@@ -932,10 +898,10 @@
       ctx.restore();
     }
 
-    function animatePetals() {
+    function renderPetals() {
       ctx.clearRect(0, 0, cw, ch);
       for (const p of petals) {
-        p.x += p.speedX + Math.sin(p.y * 0.006) * 0.5;
+        p.x += p.speedX + Math.sin(p.y * 0.005) * 0.4;
         p.y += p.speedY;
         p.rotation += p.spin;
         if (p.y > ch + 20) {
@@ -944,196 +910,201 @@
         }
         drawPetal(p);
       }
-      requestAnimationFrame(animatePetals);
+      requestAnimationFrame(renderPetals);
     }
-    animatePetals();
+    renderPetals();
 
-    // Screen Management
-    function showScreen(screenId) {
-      document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
-      const target = document.getElementById(screenId);
+    // --- 2. Screen Management ---
+    function displayView(viewId) {
+      document.querySelectorAll('.screen-view').forEach(v => v.classList.remove('active'));
+      const target = document.getElementById(viewId);
       target.classList.add('active');
       window.scrollTo(0, 0);
     }
 
-    const todayISO = new Date().toISOString().split('T')[0];
-    document.getElementById('qStartDate').value = todayISO;
-    document.getElementById('dailyLogDate').value = todayISO;
-    document.getElementById('newCycleStart').value = todayISO;
+    const todayStr = new Date().toISOString().split('T')[0];
+    document.getElementById('initStartDate').value = todayStr;
+    document.getElementById('fieldLogDate').value = todayStr;
+    document.getElementById('fieldCycleStart').value = todayStr;
 
-    let isCreateMode = false;
-    const tabSignIn = document.getElementById('tabSignInBtn');
-    const tabCreate = document.getElementById('tabCreateBtn');
-    const authActionBtn = document.getElementById('authActionBtn');
-    const footerLink = document.getElementById('footerToggleLink');
-    const footerPrompt = document.getElementById('footerTogglePrompt');
+    // Tabs toggle
+    let isRegisterActive = false;
+    const tabSign = document.getElementById('tabSign');
+    const tabRegister = document.getElementById('tabRegister');
+    const btnSubmitAuth = document.getElementById('btnSubmitAuth');
+    const linkModeToggle = document.getElementById('linkModeToggle');
+    const txtPromptToggle = document.getElementById('txtPromptToggle');
 
-    function setAuthMode(create) {
-      isCreateMode = create;
-      if (isCreateMode) {
-        tabCreate.classList.add('active');
-        tabSignIn.classList.remove('active');
-        authActionBtn.textContent = 'Create Account & Continue';
-        footerPrompt.textContent = 'Already have an account?';
-        footerLink.textContent = 'Sign in';
+    function toggleAuth(registerMode) {
+      isRegisterActive = registerMode;
+      if (isRegisterActive) {
+        tabRegister.classList.add('active');
+        tabSign.classList.remove('active');
+        btnSubmitAuth.textContent = 'Create Account & Begin';
+        txtPromptToggle.textContent = 'Already have an account?';
+        linkModeToggle.textContent = 'Sign in';
       } else {
-        tabSignIn.classList.add('active');
-        tabCreate.classList.remove('active');
-        authActionBtn.textContent = 'Sign In';
-        footerPrompt.textContent = 'New here?';
-        footerLink.textContent = 'Create an account';
+        tabSign.classList.add('active');
+        tabRegister.classList.remove('active');
+        btnSubmitAuth.textContent = 'Sign In';
+        txtPromptToggle.textContent = 'New here?';
+        linkModeToggle.textContent = 'Create an account';
       }
     }
 
-    tabSignIn.onclick = () => setAuthMode(false);
-    tabCreate.onclick = () => setAuthMode(true);
-    footerLink.onclick = (e) => {
+    tabSign.onclick = () => toggleAuth(false);
+    tabRegister.onclick = () => toggleAuth(true);
+    linkModeToggle.onclick = (e) => {
       e.preventDefault();
-      setAuthMode(!isCreateMode);
+      toggleAuth(!isRegisterActive);
     };
 
-    document.getElementById('authFormMain').onsubmit = (e) => {
+    document.getElementById('authFormElement').onsubmit = (e) => {
       e.preventDefault();
-      showScreen('onboardingScreen');
+      displayView('onboardingScreen');
     };
 
-    document.getElementById('googleLoginBtn').onclick = () => {
-      showScreen('onboardingScreen');
+    document.getElementById('btnGoogleSignIn').onclick = () => {
+      displayView('onboardingScreen');
     };
 
-    function goToStep(stepNumber) {
+    // Onboarding Navigation
+    function advanceStep(stepNum) {
       document.querySelectorAll('.q-step').forEach(q => q.classList.remove('active'));
-      document.querySelectorAll('.p-bar').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.step-pill').forEach(sp => sp.classList.remove('active'));
 
-      document.getElementById(`qStep${stepNumber}`).classList.add('active');
-      for (let i = 1; i <= stepNumber; i++) {
-        document.getElementById(`pb${i}`).classList.add('active');
+      document.getElementById(`onbQ${stepNum}`).classList.add('active');
+      for (let i = 1; i <= stepNum; i++) {
+        document.getElementById(`sp${i}`).classList.add('active');
       }
     }
 
-    document.querySelectorAll('#goalPillGroup .pill-btn').forEach(pill => {
-      pill.onclick = () => {
-        document.querySelectorAll('#goalPillGroup .pill-btn').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
+    // Goal Pills
+    document.querySelectorAll('#onbGoals .pill-chip').forEach(chip => {
+      chip.onclick = () => {
+        document.querySelectorAll('#onbGoals .pill-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
       };
     });
 
-    async function finishOnboardingToSite() {
-      const initStart = document.getElementById('qStartDate').value;
-      const initPeriod = parseInt(document.getElementById('qPeriodLength').value, 10);
+    async function completeOnboarding() {
+      const startDate = document.getElementById('initStartDate').value;
+      const periodLen = parseInt(document.getElementById('initPeriodLen').value, 10);
 
-      if (initStart) {
+      if (startDate) {
         try {
           await fetch('/api/cycles', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ start_date: initStart, period_length: initPeriod })
+            body: JSON.stringify({ start_date: startDate, period_length: periodLen })
           });
         } catch (e) {
-          console.warn('API offline; proceeding with local values');
+          console.warn('Backend API currently unreachable, continuing with client state.');
         }
       }
 
-      showScreen('siteScreen');
-      loadSiteData();
+      displayView('siteScreen');
+      loadBackendData();
     }
 
-    function returnToAuth() {
-      showScreen('authScreen');
+    function switchToAuth() {
+      displayView('authScreen');
     }
 
-    let selFlow = 'None';
-    let selMood = 'Calm';
-    let selSymptoms = [];
+    // --- 3. Pill Selectors for Dashboard ---
+    let chosenFlow = 'None';
+    let chosenMood = 'Calm';
+    let chosenSymptoms = [];
 
-    function setupSingleSelect(id, callback) {
-      const container = document.getElementById(id);
-      container.querySelectorAll('.pill-btn').forEach(btn => {
-        btn.onclick = () => {
-          container.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          callback(btn.dataset.v);
+    function setupPillsSingle(containerId, onSelect) {
+      const container = document.getElementById(containerId);
+      container.querySelectorAll('.pill-chip').forEach(chip => {
+        chip.onclick = () => {
+          container.querySelectorAll('.pill-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          onSelect(chip.dataset.val);
         };
       });
     }
 
-    setupSingleSelect('flowPillList', v => selFlow = v);
-    setupSingleSelect('moodPillList', v => selMood = v);
+    setupPillsSingle('pillsFlow', v => chosenFlow = v);
+    setupPillsSingle('pillsMood', v => chosenMood = v);
 
-    document.querySelectorAll('#symptomPillList .pill-btn').forEach(btn => {
-      btn.onclick = () => {
-        btn.classList.toggle('active');
-        const v = btn.dataset.v;
-        if (btn.classList.contains('active')) selSymptoms.push(v);
-        else selSymptoms = selSymptoms.filter(item => item !== v);
+    document.querySelectorAll('#pillsSymptoms .pill-chip').forEach(chip => {
+      chip.onclick = () => {
+        chip.classList.toggle('active');
+        const v = chip.dataset.val;
+        if (chip.classList.contains('active')) chosenSymptoms.push(v);
+        else chosenSymptoms = chosenSymptoms.filter(item => item !== v);
       };
     });
 
-    async function loadSiteData() {
+    // --- 4. Synchronize with FlowTrack Backend ---
+    async function loadBackendData() {
       try {
         const analyticsRes = await fetch('/api/analytics');
         if (analyticsRes.ok) {
           const data = await analyticsRes.json();
-          document.getElementById('nextPeriodHeader').textContent = data.next_period ? `Next Period: ${data.next_period}` : 'Cycle Initialized';
-          document.getElementById('ovulationDayHeader').textContent = data.ovulation_day || 'Estimated Day 14';
-          document.getElementById('fertileWindowHeader').textContent = data.fertile_window || 'Calculating...';
-          document.getElementById('statCycleLen').textContent = (data.avg_cycle_length || 28) + ' d';
-          document.getElementById('statPeriodLen').textContent = (data.avg_period_length || 5) + ' d';
-          document.getElementById('statCycleCount').textContent = data.total_cycles || 1;
+          document.getElementById('dispNextPeriod').textContent = data.next_period ? `Next Period: ${data.next_period}` : 'Cycle Initialized';
+          document.getElementById('dispOvulation').textContent = data.ovulation_day || 'Estimated Day 14';
+          document.getElementById('dispFertile').textContent = data.fertile_window || 'Calculating...';
+          document.getElementById('dispAvgCycle').textContent = (data.avg_cycle_length || 28) + ' d';
+          document.getElementById('dispAvgPeriod').textContent = (data.avg_period_length || 5) + ' d';
+          document.getElementById('dispCount').textContent = data.total_cycles || 1;
         }
 
         const cycleRes = await fetch('/api/cycles');
         if (cycleRes.ok) {
           const cycles = await cycleRes.json();
-          renderCycles(cycles);
+          populateCycles(cycles);
         }
       } catch (err) {
-        console.warn('Backend server not connected; using local defaults.', err);
+        console.warn('Backend server not responding; running in preview mode.', err);
       }
     }
 
-    function renderCycles(cycles) {
-      const tbody = document.getElementById('cycleTableRows');
+    function populateCycles(cycles) {
+      const tbody = document.getElementById('tableCyclesBody');
       if (!cycles || cycles.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-dim);">No cycles recorded yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No cycles recorded yet.</td></tr>';
         return;
       }
       tbody.innerHTML = cycles.map(c => `
         <tr>
           <td><strong>${c.start_date}</strong></td>
           <td>${c.period_length || 5} days</td>
-          <td><button class="btn-remove" onclick="removeCycle(${c.id})">Remove</button></td>
+          <td><button class="btn-del" onclick="deleteCycleEntry(${c.id})">Remove</button></td>
         </tr>
       `).join('');
     }
 
-    async function removeCycle(id) {
+    async function deleteCycleEntry(id) {
       await fetch(`/api/cycles/${id}`, { method: 'DELETE' });
-      loadSiteData();
+      loadBackendData();
     }
 
-    document.getElementById('newCycleFormSite').onsubmit = async (e) => {
+    document.getElementById('formNewCycle').onsubmit = async (e) => {
       e.preventDefault();
       const payload = {
-        start_date: document.getElementById('newCycleStart').value,
-        period_length: parseInt(document.getElementById('newCyclePeriod').value, 10)
+        start_date: document.getElementById('fieldCycleStart').value,
+        period_length: parseInt(document.getElementById('fieldCycleDays').value, 10)
       };
       await fetch('/api/cycles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      loadSiteData();
+      loadBackendData();
     };
 
-    document.getElementById('dailyFormSite').onsubmit = async (e) => {
+    document.getElementById('formDailyLog').onsubmit = async (e) => {
       e.preventDefault();
       const payload = {
-        date: document.getElementById('dailyLogDate').value,
-        flow_intensity: selFlow,
-        mood: selMood,
-        symptoms: selSymptoms.join(','),
-        notes: document.getElementById('dailyNotes').value
+        date: document.getElementById('fieldLogDate').value,
+        flow_intensity: chosenFlow,
+        mood: chosenMood,
+        symptoms: chosenSymptoms.join(','),
+        notes: document.getElementById('fieldNotes').value
       };
       await fetch('/api/logs', {
         method: 'POST',
@@ -1145,4 +1116,3 @@
   </script>
 </body>
 </html>
->>>>>>> 7aec2ea (Update UI to blush cream glassmorphism)
