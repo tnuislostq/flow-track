@@ -10,16 +10,16 @@
 
   <style>
     :root {
-      --bg-dark: #2a1520;
-      --bg-gradient: radial-gradient(circle at 20% 30%, #4a2034 0%, #29121e 60%, #170911 100%);
+      --bg-dark: #201018;
+      --bg-gradient: radial-gradient(circle at 25% 25%, #3d1b2c 0%, #201018 60%, #12070e 100%);
       --glass-surface: rgba(255, 255, 255, 0.08);
-      --glass-surface-hover: rgba(255, 255, 255, 0.12);
+      --glass-surface-hover: rgba(255, 255, 255, 0.13);
       --glass-border: rgba(255, 255, 255, 0.16);
-      --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+      --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.38);
       --accent-pink: #ff5c8a;
       --accent-pink-hover: #ff336e;
       --accent-soft: #fecdd3;
-      --accent-glow: rgba(255, 92, 138, 0.45);
+      --accent-glow: rgba(255, 92, 138, 0.4);
       --text-bright: #ffffff;
       --text-dim: #c9b4be;
       --card-radius: 28px;
@@ -52,16 +52,16 @@
       z-index: 0;
     }
 
-    /* Ambient Background Glow Spots */
+    /* Ambient Background Glow */
     .glow-spot {
       position: fixed;
       border-radius: 50%;
-      filter: blur(90px);
+      filter: blur(100px);
       pointer-events: none;
       z-index: 0;
     }
-    .glow-1 { top: 10%; left: 8%; width: 380px; height: 380px; background: rgba(255, 92, 138, 0.18); }
-    .glow-2 { bottom: 15%; right: 10%; width: 440px; height: 440px; background: rgba(186, 68, 116, 0.15); }
+    .glow-1 { top: 10%; left: 8%; width: 420px; height: 420px; background: rgba(255, 92, 138, 0.16); }
+    .glow-2 { bottom: 12%; right: 8%; width: 480px; height: 480px; background: rgba(214, 75, 126, 0.14); }
 
     /* Screen Views Manager */
     .screen-view {
@@ -79,7 +79,7 @@
       transform: translateY(0);
     }
 
-    /* Glassmorphism Card Template */
+    /* Glassmorphic Card */
     .glass-card {
       background: var(--glass-surface);
       backdrop-filter: blur(24px) saturate(180%);
@@ -88,87 +88,95 @@
       border-radius: var(--card-radius);
       box-shadow: var(--glass-shadow);
       padding: 36px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.25s ease-out, box-shadow 0.25s ease;
       position: relative;
     }
 
     /* ========================================================
-       LARGE 3D BLOOMING ROSE / PEONY FLOWER
+       REALISTIC FLEUR-STYLE PEONY & ROSE SHOWCASE
        ======================================================== */
-    .flower-3d-wrapper {
-      perspective: 1000px;
+    /* Mini Peony Badge for Auth Screen */
+    .peony-auth-badge {
+      width: 86px;
+      height: 86px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      padding: 4px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 92, 138, 0.4));
+      box-shadow: 0 8px 24px var(--accent-glow);
       display: flex;
-      justify-content: center;
       align-items: center;
-      margin: 0 auto;
+      justify-content: center;
     }
 
-    /* Hero Size Flower (Dashboard) */
-    .flower-hero-size {
-      width: 160px;
-      height: 160px;
-    }
-
-    /* Auth Logo Size Flower */
-    .flower-logo-size {
-      width: 72px;
-      height: 72px;
-      margin-bottom: 16px;
-    }
-
-    .flower-container {
+    .peony-auth-badge img {
       width: 100%;
       height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      animation: rotateFlower3D 16s infinite linear;
-    }
-
-    @keyframes rotateFlower3D {
-      0% { transform: rotateX(20deg) rotateY(0deg) rotateZ(0deg); }
-      100% { transform: rotateX(20deg) rotateY(360deg) rotateZ(360deg); }
-    }
-
-    .peony-petal {
-      position: absolute;
-      width: 44%;
-      height: 60%;
-      left: 28%;
-      top: 20%;
-      border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
-      transform-origin: center bottom;
-      box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.4), 0 4px 12px rgba(180, 40, 90, 0.25);
-      background: linear-gradient(135deg, #ffd1dc 0%, #ff85a2 50%, #e03a68 100%);
-      opacity: 0.9;
-    }
-
-    /* Concentric layered 3D petal arrangements */
-    .l1.p1 { transform: rotate(0deg) translateZ(10px) rotateX(25deg); }
-    .l1.p2 { transform: rotate(72deg) translateZ(10px) rotateX(25deg); }
-    .l1.p3 { transform: rotate(144deg) translateZ(10px) rotateX(25deg); }
-    .l1.p4 { transform: rotate(216deg) translateZ(10px) rotateX(25deg); }
-    .l1.p5 { transform: rotate(288deg) translateZ(10px) rotateX(25deg); }
-
-    .l2.p1 { transform: rotate(36deg) translateZ(20px) rotateX(40deg) scale(0.9); }
-    .l2.p2 { transform: rotate(108deg) translateZ(20px) rotateX(40deg) scale(0.9); }
-    .l2.p3 { transform: rotate(180deg) translateZ(20px) rotateX(40deg) scale(0.9); }
-    .l2.p4 { transform: rotate(252deg) translateZ(20px) rotateX(40deg) scale(0.9); }
-    .l2.p5 { transform: rotate(324deg) translateZ(20px) rotateX(40deg) scale(0.9); }
-
-    .flower-core {
-      position: absolute;
-      width: 24%;
-      height: 24%;
-      left: 38%;
-      top: 38%;
       border-radius: 50%;
-      background: radial-gradient(circle, #fff176 10%, #f59e0b 80%);
-      transform: translateZ(26px);
-      box-shadow: 0 0 16px rgba(255, 235, 59, 0.6);
+      object-fit: cover;
+      animation: gentleBreathe 8s ease-in-out infinite alternate;
+    }
+
+    /* Large Editorial Peony Window for Dashboard */
+    .peony-hero-window {
+      width: 100%;
+      height: 380px;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), inset 0 0 40px rgba(255, 180, 205, 0.2);
+    }
+
+    .peony-hero-window img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.03);
+      animation: subtlePan 14s ease-in-out infinite alternate;
+      filter: contrast(105%) saturate(110%);
+    }
+
+    /* Dreamy mist overlay on the flower window */
+    .peony-hero-window::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(61, 27, 44, 0.05) 0%, rgba(32, 16, 24, 0.4) 100%);
+      pointer-events: none;
+    }
+
+    .flower-caption {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 16px;
+      border-radius: 14px;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      color: #fff;
+      text-align: center;
+      font-style: italic;
+    }
+
+    @keyframes gentleBreathe {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.08); }
+    }
+
+    @keyframes subtlePan {
+      0% { transform: scale(1.03) translateY(0); }
+      100% { transform: scale(1.1) translateY(-8px); }
     }
 
     /* ========================================================
-       SCREEN 1: AUTHENTICATION VIEW (FIRST)
+       SCREEN 1: AUTHENTICATION (FIRST)
        ======================================================== */
     #authScreen {
       align-items: center;
@@ -195,7 +203,6 @@
       margin-bottom: 24px;
     }
 
-    /* Segmented Tab Switch */
     .tab-switch {
       display: flex;
       background: rgba(0, 0, 0, 0.25);
@@ -382,7 +389,15 @@
     .nav-brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
+    }
+
+    .nav-brand img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--glass-border);
     }
 
     .nav-brand h2 {
@@ -406,23 +421,23 @@
       border-color: var(--accent-pink);
     }
 
-    /* Hero Showcase with Large Flower */
+    /* Hero Banner: Info on Left + Peony Showcase on Right */
     .hero-banner {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 28px;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 32px;
       margin-bottom: 30px;
       align-items: center;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 920px) {
       .hero-banner { grid-template-columns: 1fr; }
     }
 
     .hero-content h2 {
       font-family: 'Playfair Display', serif;
-      font-size: 2.5rem;
-      line-height: 1.2;
+      font-size: 2.6rem;
+      line-height: 1.15;
       margin-bottom: 12px;
     }
 
@@ -454,16 +469,7 @@
       text-transform: uppercase;
     }
 
-    .flower-showcase-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 40px;
-    }
-
-    /* Pill Selection Buttons for Log Forms */
+    /* Pill Selection Buttons */
     .pill-container {
       display: flex;
       flex-wrap: wrap;
@@ -498,7 +504,7 @@
       transform: translateY(-1px);
     }
 
-    /* Dashboard Layout Grids */
+    /* Grids */
     .main-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -542,10 +548,10 @@
 </head>
 <body>
 
-  <!-- Falling Petal Particles Canvas -->
+  <!-- Falling Petal Particles Simulation -->
   <canvas id="petals-canvas"></canvas>
 
-  <!-- Ambient Glow Background -->
+  <!-- Ambient Glow Spots -->
   <div class="glow-spot glow-1"></div>
   <div class="glow-spot glow-2"></div>
 
@@ -554,27 +560,14 @@
        ======================================================== -->
   <section class="screen-view active" id="authScreen">
     <div class="glass-card auth-box">
-      <!-- 3D Rotating Flower -->
-      <div class="flower-3d-wrapper flower-logo-size">
-        <div class="flower-container">
-          <div class="peony-petal l1 p1"></div>
-          <div class="peony-petal l1 p2"></div>
-          <div class="peony-petal l1 p3"></div>
-          <div class="peony-petal l1 p4"></div>
-          <div class="peony-petal l1 p5"></div>
-          <div class="peony-petal l2 p1"></div>
-          <div class="peony-petal l2 p2"></div>
-          <div class="peony-petal l2 p3"></div>
-          <div class="peony-petal l2 p4"></div>
-          <div class="peony-petal l2 p5"></div>
-          <div class="flower-core"></div>
-        </div>
+      <!-- Peony Blossom Emblem -->
+      <div class="peony-auth-badge">
+        <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=300&q=80" alt="Blush Peony Bloom">
       </div>
 
       <h1 class="auth-title">Welcome to FlowTrack</h1>
       <p class="auth-subtitle">Sign in to see your cycle insights</p>
 
-      <!-- Toggle Sign In vs Create Account -->
       <div class="tab-switch">
         <button class="tab-btn active" id="tabSignInBtn">Sign In</button>
         <button class="tab-btn" id="tabCreateBtn">Create Account</button>
@@ -669,16 +662,7 @@
     <!-- Navbar -->
     <header class="top-nav">
       <div class="nav-brand">
-        <div class="flower-3d-wrapper" style="width: 38px; height: 38px;">
-          <div class="flower-container">
-            <div class="peony-petal l1 p1"></div>
-            <div class="peony-petal l1 p2"></div>
-            <div class="peony-petal l1 p3"></div>
-            <div class="peony-petal l1 p4"></div>
-            <div class="peony-petal l1 p5"></div>
-            <div class="flower-core"></div>
-          </div>
-        </div>
+        <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=100&q=80" alt="FlowTrack">
         <h2>FlowTrack</h2>
       </div>
       <div>
@@ -686,7 +670,7 @@
       </div>
     </header>
 
-    <!-- Large Blooming Flower Hero Banner -->
+    <!-- Large Blooming Peony Hero Showcase -->
     <div class="glass-card hero-banner">
       <div class="hero-content">
         <span class="badge-step">Cycle Forecast</span>
@@ -714,26 +698,12 @@
         </div>
       </div>
 
-      <!-- Prominent Blooming 3D Flower Showcase -->
-      <div class="flower-showcase-card">
-        <div class="flower-3d-wrapper flower-hero-size">
-          <div class="flower-container">
-            <div class="peony-petal l1 p1"></div>
-            <div class="peony-petal l1 p2"></div>
-            <div class="peony-petal l1 p3"></div>
-            <div class="peony-petal l1 p4"></div>
-            <div class="peony-petal l1 p5"></div>
-            <div class="peony-petal l2 p1"></div>
-            <div class="peony-petal l2 p2"></div>
-            <div class="peony-petal l2 p3"></div>
-            <div class="peony-petal l2 p4"></div>
-            <div class="peony-petal l2 p5"></div>
-            <div class="flower-core"></div>
-          </div>
+      <!-- The Fleur-Style Misty Blooming Peony Showcase Window -->
+      <div class="peony-hero-window">
+        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=900&q=85" alt="Lush blooming garden roses and peonies in mist">
+        <div class="flower-caption">
+          "Flowers expressing rhythm, warmth, and emotion"
         </div>
-        <p style="font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--accent-soft); margin-top: 18px; font-style: italic;">
-          "Expressing rhythm, emotions, and care"
-        </p>
       </div>
     </div>
 
@@ -814,11 +784,9 @@
     </div>
   </section>
 
-  <!-- ========================================================
-       SCRIPTS: ANIMATIONS, WORKFLOW & API CONNECTION
-       ======================================================== -->
+  <!-- Scripts -->
   <script>
-    // --- 1. Falling Petal Particles Simulation ---
+    // Falling Petal Simulation
     const canvas = document.getElementById('petals-canvas');
     const ctx = canvas.getContext('2d');
     let cw = canvas.width = window.innerWidth;
@@ -829,7 +797,7 @@
       ch = canvas.height = window.innerHeight;
     });
 
-    const petals = Array.from({ length: 30 }, () => ({
+    const petals = Array.from({ length: 28 }, () => ({
       x: Math.random() * cw,
       y: Math.random() * ch - ch,
       size: Math.random() * 10 + 8,
@@ -871,7 +839,7 @@
     }
     animatePetals();
 
-    // --- 2. Screen Transition Management ---
+    // Screen Management
     function showScreen(screenId) {
       document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
       const target = document.getElementById(screenId);
@@ -879,13 +847,11 @@
       window.scrollTo(0, 0);
     }
 
-    // Default dates
     const todayISO = new Date().toISOString().split('T')[0];
     document.getElementById('qStartDate').value = todayISO;
     document.getElementById('dailyLogDate').value = todayISO;
     document.getElementById('newCycleStart').value = todayISO;
 
-    // Tab switcher between Sign In & Create Account
     let isCreateMode = false;
     const tabSignIn = document.getElementById('tabSignInBtn');
     const tabCreate = document.getElementById('tabCreateBtn');
@@ -917,7 +883,6 @@
       setAuthMode(!isCreateMode);
     };
 
-    // Submitting Auth form -> moves to Question onboarding
     document.getElementById('authFormMain').onsubmit = (e) => {
       e.preventDefault();
       showScreen('onboardingScreen');
@@ -927,7 +892,6 @@
       showScreen('onboardingScreen');
     };
 
-    // Onboarding step navigation
     function goToStep(stepNumber) {
       document.querySelectorAll('.q-step').forEach(q => q.classList.remove('active'));
       document.querySelectorAll('.p-bar').forEach(b => b.classList.remove('active'));
@@ -938,7 +902,6 @@
       }
     }
 
-    // Goal pill selection
     document.querySelectorAll('#goalPillGroup .pill-btn').forEach(pill => {
       pill.onclick = () => {
         document.querySelectorAll('#goalPillGroup .pill-btn').forEach(p => p.classList.remove('active'));
@@ -946,7 +909,6 @@
       };
     });
 
-    // Complete onboarding -> move to Site
     async function finishOnboardingToSite() {
       const initStart = document.getElementById('qStartDate').value;
       const initPeriod = parseInt(document.getElementById('qPeriodLength').value, 10);
@@ -971,7 +933,6 @@
       showScreen('authScreen');
     }
 
-    // --- 3. Pill Logic on Site Check-In ---
     let selFlow = 'None';
     let selMood = 'Calm';
     let selSymptoms = [];
@@ -999,7 +960,6 @@
       };
     });
 
-    // --- 4. Synchronize with FlowTrack Flask Backend ---
     async function loadSiteData() {
       try {
         const analyticsRes = await fetch('/api/analytics');
