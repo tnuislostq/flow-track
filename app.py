@@ -316,4 +316,29 @@ def get_education_content():
             "nutrition": "Warm soups, iron-rich spinach, lentils, and magnesium for muscle relaxation.",
             "movement": "Gentle stretching, restorative yoga, walks."
         },
-        "follic
+        "follicular": {
+            "title": "Follicular Phase (Days 6–13)",
+            "hormones": "FSH stimulates follicle growth; estrogen steadily rises.",
+            "energy": "Creative, optimistic, energetic.",
+            "nutrition": "Fermented foods (kimchi, yogurt), vibrant salads, healthy fats.",
+            "movement": "Strength training, cardio, and high-energy workouts."
+        },
+        "ovulatory": {
+            "title": "Ovulatory Phase (Days 14–16)",
+            "hormones": "Estrogen and LH peak to trigger the release of an egg.",
+            "energy": "Peak confidence, social, communicative.",
+            "nutrition": "Antioxidant-rich berries, light proteins, hydrating foods.",
+            "movement": "HIIT, group fitness, high-intensity endurance."
+        },
+        "luteal": {
+            "title": "Luteal Phase (Days 17–28)",
+            "hormones": "Progesterone dominates to prepare the uterine lining.",
+            "energy": "Organized, focused, gradually winding down.",
+            "nutrition": "Root vegetables, dark leafy greens, complex carbs, dark chocolate.",
+            "movement": "Pilates, moderate weight training, walking."
+        }
+    })
+
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
